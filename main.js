@@ -27,7 +27,7 @@ scene.add(directionalLight);
 const loader = new GLTFLoader();
 
 // Metti il tuo file .glb nella cartella 'public' o 'assets'
-loader.load('/assets/cassetta.glb', (gltf) => {
+loader.load('/cassette-tape/source/cassette_tape_02.glb', (gltf) => {
     const model = gltf.scene;
     scene.add(model);
     
