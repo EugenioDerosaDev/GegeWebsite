@@ -1,18 +1,162 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <title>La mia musica</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Gege Music</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;600;800&display=swap');
+
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: Inter, sans-serif;
+  color: white;
+  background: black;
+  overflow-x: hidden;
+}
+
+/* PARALLAX SECTIONS */
+.section {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.parallax {
+  background-image: url('https://images.unsplash.com/photo-1521337706264-a414f153a5a6'); /* sfondo cinematico */
+  height: 100vh;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  filter: brightness(0.4);
+}
+
+/* HERO TEXT */
+.hero {
+  position: absolute;
+  width: 100%;
+}
+
+h1 {
+  font-size: 60px;
+  letter-spacing: 3px;
+  margin: 0;
+}
+
+h2 {
+  font-weight: 300;
+  opacity: 0.8;
+}
+
+.release {
+  font-size: 20px;
+  margin-top: 10px;
+  opacity: 0.7;
+}
+
+/* CARD */
+.card {
+  background: #111;
+  padding: 50px 20px;
+}
+
+img {
+  width: 300px;
+  border-radius: 15px;
+  margin-top: 20px;
+}
+
+/* LINKS */
+.links a {
+  display: inline-block;
+  margin: 10px;
+  padding: 10px 20px;
+  border: 1px solid white;
+  color: white;
+  text-decoration: none;
+  border-radius: 30px;
+  transition: 0.3s;
+}
+
+.links a:hover {
+  background: white;
+  color: black;
+}
+
+/* VIDEO */
+iframe {
+  width: 80%;
+  height: 400px;
+  margin-top: 20px;
+  border-radius: 10px;
+}
+
+/* SMALL SCROLL EFFECT */
+.fade {
+  opacity: 0;
+  transform: translateY(40px);
+  animation: fadeUp 1.5s forwards;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>
 </head>
-<body style="font-family: Arial; text-align:center; padding:50px;">
-  
-  <h1>Ultima uscita</h1>
 
-  <p>Il mio nuovo singolo è fuori ora!</p>
+<body>
 
-  <a href="LINK_SPOTIFY_O_YOUTUBE" target="_blank">
-    Ascolta qui
-  </a>
+<!-- HERO PARALLAX -->
+<div class="section parallax">
+  <div class="hero fade">
+    <h2>GEGE</h2>
+    <h1>DON'T FEEL A THING</h1>
+    <div class="release">OUT 11 LUGLIO</div>
+  </div>
+</div>
+
+<!-- INFO -->
+<div class="section card fade">
+  <div>
+    <h2>NUOVA USCITA</h2>
+    <p>Singolo ufficiale disponibile su tutte le piattaforme</p>
+
+    <!-- COPERTINA -->
+    <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d" alt="cover">
+
+    <!-- VIDEO -->
+    <div>
+      <iframe 
+        src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+        frameborder="0"
+        allowfullscreen>
+      </iframe>
+    </div>
+
+    <!-- LINK -->
+    <div class="links">
+      <a href="#">Spotify</a>
+      <a href="#">Apple Music</a>
+      <a href="#">YouTube Music</a>
+      <a href="#">Instagram</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="section" style="height: 50vh; background:#000;">
+  <h2 style="opacity:0.3;">GEGE MUSIC</h2>
+</div>
 
 </body>
 </html>
