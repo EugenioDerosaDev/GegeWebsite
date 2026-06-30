@@ -40,6 +40,15 @@
     body::-webkit-scrollbar { display: none; }
     body { -ms-overflow-style: none; scrollbar-width: none; }
 
+
+    html.is-section-locked,
+    body.is-section-locked {
+        overflow: hidden !important;
+        overscroll-behavior: none !important;
+        touch-action: none !important;
+    }
+
+
     .font-syne { font-family: 'Syne', sans-serif; }
 
     #canvas-container {
@@ -663,7 +672,7 @@
     </h2>
 
     <img
-        src="./coverart_rel-2.png"
+        src="coverart_rel-2.png"
         alt="Don't Feel a Thing cover"
         class="release-cover">
 </div><p class="text-gray-200 text-base md:text-lg font-light mb-8 leading-relaxed" data-i18n="singleDescription">A fresh, feel-good house pop track crafted for warm days. Good energy and a groove meant to be shared. Take a listen and join my journey from the very beginning.</p>
@@ -1103,36 +1112,45 @@
     }
 
     let scrollTween;
-    let autoScrollLocked = false;
-    let autoScrollReady = true;
+
+    const sectionSnap = {
+        activeIndex: window.scrollY > window.innerHeight * 0.5 ? 1 : 0,
+        locked: false,
+        cooldown: false,
+        touchStartY: 0,
+        touchStartX: 0,
+        touchConsumed: false,
+        duration: reduceMotion ? 0 : 920
+    };
 
     function initScrollAnimations() {
         if (scrollTween) scrollTween.kill();
         ScrollTrigger.getAll().forEach(t => t.kill());
 
         const isMobile = window.innerWidth < 768;
-        const travel = () => document.documentElement.scrollHeight - window.innerHeight;
-        const initial = getSceneState(0);
+        const travel = () => document.documentElement.scrollHeight - getViewportHeight();
+        const initial = getSceneState(sectionSnap.activeIndex);
 
         modelGroup.scale.setScalar(initial.scale);
         modelGroup.position.set(initial.x, initial.y, initial.z);
         modelGroup.rotation.set(initial.rx, initial.ry, initial.rz);
 
-        gsap.set('#section-1 > div', { opacity: introHasFinished ? 1 : 0, y: introHasFinished ? 0 : 26, scale: introHasFinished ? 1 : .985, force3D: true });
-        gsap.set('#section-2 > div', { opacity: isMobile ? 0 : 1, y: isMobile ? 42 : 18, scale: 1, force3D: true });
-        gsap.set('#section-2', { pointerEvents: isMobile ? 'none' : 'auto' });
+        gsap.set('#section-1 > div', { opacity: introHasFinished && sectionSnap.activeIndex === 0 ? 1 : 0, y: introHasFinished && sectionSnap.activeIndex === 0 ? 0 : -14, scale: sectionSnap.activeIndex === 0 ? 1 : .985, force3D: true });
+        gsap.set('#section-2 > div', { opacity: sectionSnap.activeIndex === 1 ? 1 : 0, y: sectionSnap.activeIndex === 1 ? (isMobile ? 0 : 18) : 42, scale: 1, force3D: true });
+        gsap.set('#section-2', { pointerEvents: sectionSnap.activeIndex === 1 ? 'auto' : 'none' });
 
         scrollTween = gsap.timeline({
             scrollTrigger: {
                 trigger: 'main',
                 start: 'top top',
                 end: travel,
-                scrub: reduceMotion ? 0 : 0.42,
+                scrub: reduceMotion ? 0 : 0.16,
                 invalidateOnRefresh: true,
-                anticipatePin: 1,
+                fastScrollEnd: false,
+                preventOverlaps: true,
                 onUpdate: (self) => {
                     motion.targetProgress = self.progress;
-                    motion.scrollVelocity = Math.abs(self.getVelocity()) / 1800;
+                    motion.scrollVelocity = Math.abs(self.getVelocity()) / 2200;
                 }
             }
         });
@@ -1156,48 +1174,18 @@
             .to('.bg-glow-blue', { xPercent: -30, yPercent: -15, opacity: 1, ease: 'none' }, 0)
             .to('#scene-shadow', { opacity: .85, scale: 1.05, ease: 'none' }, 0.18);
 
-        ScrollTrigger.create({
-            trigger: '#section-2',
-            start: 'top center',
-            end: 'bottom center',
-            onEnter: () => gsap.set('#section-2', { pointerEvents: 'auto' }),
-            onLeaveBack: () => isMobile && gsap.set('#section-2', { pointerEvents: 'none' })
-        });
-
         ScrollTrigger.refresh();
+        requestAnimationFrame(() => window.scrollTo(0, sectionSnap.activeIndex === 1 ? getSecondPageTargetY() : 0));
     }
 
-    function smoothNativeScrollTo(targetY, duration = 820) {
-        if (!autoScrollReady || autoScrollLocked) return;
+    function setSectionLock(locked) {
+        sectionSnap.locked = locked;
+        document.documentElement.classList.toggle('is-section-locked', locked);
+        document.body.classList.toggle('is-section-locked', locked);
+    }
 
-        autoScrollReady = false;
-        autoScrollLocked = true;
-
-        const startY = window.scrollY;
-        const distance = targetY - startY;
-        const start = performance.now();
-
-        function step(now) {
-            const elapsed = now - start;
-            const progress = Math.min(elapsed / duration, 1);
-            const eased = progress < .5
-                ? 4 * progress * progress * progress
-                : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-
-            window.scrollTo(0, startY + distance * eased);
-
-            if (progress < 1) {
-                requestAnimationFrame(step);
-            } else {
-                window.scrollTo(0, targetY);
-                motion.targetProgress = targetY <= 2 ? 0 : 1;
-                ScrollTrigger.update();
-                autoScrollLocked = false;
-                setTimeout(() => { autoScrollReady = true; }, 260);
-            }
-        }
-
-        requestAnimationFrame(step);
+    function easeInOutCubic(t) {
+        return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
     }
 
     function getViewportHeight() {
@@ -1208,42 +1196,100 @@
         return Math.max(0, document.documentElement.scrollHeight - getViewportHeight());
     }
 
-    function snapToDirection(direction) {
-        if (reduceMotion) return false;
-
-        const targetBottom = getSecondPageTargetY();
-        const y = window.scrollY;
-
-        if (direction > 0 && y < targetBottom - 40) {
-            smoothNativeScrollTo(targetBottom, 820);
-            return true;
+    function snapToSection(index, duration = sectionSnap.duration) {
+        if (reduceMotion) {
+            const targetY = index === 1 ? getSecondPageTargetY() : 0;
+            sectionSnap.activeIndex = index;
+            window.scrollTo(0, targetY);
+            motion.progress = index;
+            motion.targetProgress = index;
+            ScrollTrigger.update();
+            gsap.set('#section-2', { pointerEvents: index === 1 ? 'auto' : 'none' });
+            return;
         }
 
-        if (direction < 0 && y > 40) {
-            smoothNativeScrollTo(0, 760);
-            return true;
+        if (sectionSnap.locked || sectionSnap.cooldown || index === sectionSnap.activeIndex) return;
+
+        sectionSnap.cooldown = true;
+        setSectionLock(true);
+
+        linksMenu.classList.remove('open');
+        updateListenButton();
+
+        const targetY = index === 1 ? getSecondPageTargetY() : 0;
+        const startY = window.scrollY;
+        const distance = targetY - startY;
+        const startTime = performance.now();
+
+        function step(now) {
+            const p = Math.min((now - startTime) / duration, 1);
+            const eased = easeInOutCubic(p);
+
+            window.scrollTo(0, startY + distance * eased);
+            motion.targetProgress = index === 1 ? eased : 1 - eased;
+
+            if (p < 1) {
+                requestAnimationFrame(step);
+                return;
+            }
+
+            sectionSnap.activeIndex = index;
+            window.scrollTo(0, targetY);
+            motion.targetProgress = index;
+            ScrollTrigger.update();
+            gsap.set('#section-2', { pointerEvents: index === 1 ? 'auto' : 'none' });
+
+            gsap.delayedCall(0.22, () => {
+                motion.progress = index;
+                setSectionLock(false);
+                gsap.delayedCall(0.18, () => { sectionSnap.cooldown = false; });
+            });
         }
 
-        return false;
+        requestAnimationFrame(step);
+    }
+
+    function requestSectionMove(direction) {
+        if (!languageWasChosen || !introHasFinished || sectionSnap.locked || sectionSnap.cooldown) return true;
+        const targetIndex = direction > 0 ? 1 : 0;
+        snapToSection(targetIndex);
+        return true;
     }
 
     window.addEventListener('wheel', (e) => {
-        if (Math.abs(e.deltaY) < 8) return;
-        if (snapToDirection(e.deltaY)) e.preventDefault();
+        if (Math.abs(e.deltaY) < 10) return;
+        e.preventDefault();
+        requestSectionMove(e.deltaY);
     }, { passive: false });
 
     window.addEventListener('touchstart', (e) => {
-        window.__touchStartY = e.touches[0].clientY;
+        sectionSnap.touchStartY = e.touches[0].clientY;
+        sectionSnap.touchStartX = e.touches[0].clientX;
+        sectionSnap.touchConsumed = false;
     }, { passive: true });
 
     window.addEventListener('touchmove', (e) => {
-        const startY = window.__touchStartY ?? e.touches[0].clientY;
         const currentY = e.touches[0].clientY;
-        const direction = startY - currentY;
+        const currentX = e.touches[0].clientX;
+        const deltaY = sectionSnap.touchStartY - currentY;
+        const deltaX = sectionSnap.touchStartX - currentX;
 
-        if (Math.abs(direction) > 12 && snapToDirection(direction)) {
-            e.preventDefault();
-        }
+        if (Math.abs(deltaY) < 16 || Math.abs(deltaY) < Math.abs(deltaX) * 1.15) return;
+
+        e.preventDefault();
+        if (sectionSnap.touchConsumed) return;
+
+        sectionSnap.touchConsumed = true;
+        requestSectionMove(deltaY);
+    }, { passive: false });
+
+    window.addEventListener('keydown', (e) => {
+        const downKeys = ['ArrowDown', 'PageDown', 'Space', 'End'];
+        const upKeys = ['ArrowUp', 'PageUp', 'Home'];
+        if (![...downKeys, ...upKeys].includes(e.code)) return;
+
+        e.preventDefault();
+        requestSectionMove(downKeys.includes(e.code) ? 1 : -1);
     }, { passive: false });
 
     window.addEventListener('pointermove', (e) => {
