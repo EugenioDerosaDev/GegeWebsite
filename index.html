@@ -4,48 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gegè - Official Artist Page</title>
-    <!-- Tailwind CSS per un design moderno e ultra-rapido -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font di tendenza Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-    <!-- FontAwesome per le icone di Spotify, Apple, YouTube -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-        body {
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow-y: auto;
             background-color: #030306;
             color: #ffffff;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            overflow-x: hidden;
+            scroll-behavior: smooth;
         }
         
+        body::-webkit-scrollbar {
+            display: none;
+        }
+        body {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
         .font-syne {
             font-family: 'Syne', sans-serif;
         }
 
-        /* Container 3D fisso sullo sfondo */
         #canvas-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
-            height: 100vh;
+            height: 100dvh;
             z-index: 1;
             pointer-events: none;
         }
 
-        /* Sezioni di Scroll */
+        /* Torniamo a 100vh così le sezioni coprono tutto lo schermo singolarmente */
         .scroll-section {
-            height: 100vh;
+            height: 100vh; 
+            width: 100%;
             position: relative;
             z-index: 2;
             display: flex;
             align-items: center;
         }
 
-        /* Menu espandibile animato */
         .links-panel {
             max-height: 0;
             opacity: 0;
@@ -59,7 +67,6 @@
             margin-top: 1rem;
         }
 
-        /* Effetti Glow per i brand musicali */
         .btn-spotify:hover {
             box-shadow: 0 0 15px rgba(30, 215, 96, 0.4);
             border-color: #1ed760;
@@ -73,12 +80,11 @@
             border-color: #ff0000;
         }
 
-        /* Cerchi di luce ambientali nello sfondo */
         .bg-glow-pink {
             position: absolute;
             width: 400px;
             height: 400px;
-            background: radial-gradient(circle, rgba(255, 0, 127, 0.15) 0%, rgba(0,0,0,0) 70%);
+            background: radial-gradient(circle, rgba(255, 0, 127, 0.12) 0%, rgba(0,0,0,0) 70%);
             top: 20%;
             left: -10%;
             pointer-events: none;
@@ -89,7 +95,7 @@
             position: absolute;
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, rgba(0, 240, 255, 0.12) 0%, rgba(0,0,0,0) 70%);
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.09) 0%, rgba(0,0,0,0) 70%);
             bottom: 10%;
             right: -10%;
             pointer-events: none;
@@ -99,55 +105,49 @@
 </head>
 <body>
 
-    <!-- Effetti di luce atmosferici nello sfondo -->
     <div class="bg-glow-pink"></div>
     <div class="bg-glow-blue"></div>
 
-    <!-- Canvas per Three.js -->
     <div id="canvas-container"></div>
 
-    <!-- Contenuto della pagina -->
-    <main class="relative">
+    <main class="relative z-10">
         
-        <!-- SEZIONE 1: Presentazione Artista -->
-        <section class="scroll-section px-8 md:px-24">
-            <div class="max-w-xl">
+        <!-- SEZIONE 1 -->
+        <section id="section-1" class="scroll-section px-6 md:px-24">
+            <div class="max-w-xl bg-black/40 backdrop-blur-md p-6 md:p-8 rounded-2xl border border-white/5 shadow-2xl">
                 <span class="text-xs uppercase tracking-[0.3em] text-[#00f0ff] font-semibold mb-2 block">Official Artist Profile</span>
-                <h1 class="font-syne text-7xl md:text-9xl font-extrabold tracking-tight leading-none mb-6">
+                <h1 class="font-syne text-6xl md:text-9xl font-extrabold tracking-tight leading-none mb-6">
                     GEGÈ
                 </h1>
-                <p class="text-gray-400 text-lg md:text-xl font-light leading-relaxed mb-8">
+                <p class="text-gray-200 text-lg md:text-xl font-light leading-relaxed mb-8">
                     Sperimentatore sonoro, radici analogiche e visioni digitali. Gegè fonde il calore del nastro magnetico con le frequenze del futuro.
                 </p>
-                <div class="flex items-center gap-2 text-sm text-gray-500">
+                <div class="flex items-center gap-2 text-sm text-gray-400">
                     <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                     <span>Nuova release disponibile qui sotto</span>
                 </div>
             </div>
         </section>
         
-        <!-- SEZIONE 2: Nuovo Singolo con Link Espandibili -->
-        <section class="scroll-section px-8 md:px-24 justify-end">
-            <div class="max-w-xl w-full text-right md:text-left md:ml-auto">
-                <span class="text-xs uppercase tracking-[0.3em] text-[#ff007f] font-semibold mb-2 block font-semibold">New Single Out Now</span>
+        <!-- SEZIONE 2 (Aggiunto ID e opacità iniziale 0 su mobile via GSAP) -->
+        <section id="section-2" class="scroll-section px-6 md:px-24 justify-end">
+            <div class="max-w-xl w-full text-right md:text-left md:ml-auto bg-black/40 backdrop-blur-md p-6 md:p-8 rounded-2xl border border-white/5 shadow-2xl">
+                <span class="text-xs uppercase tracking-[0.3em] text-[#ff007f] font-semibold mb-2 block">New Single Out Now</span>
                 <h2 class="font-syne text-5xl md:text-7xl font-extrabold tracking-tight leading-none mb-4">
                     Don't feel<br>a thing
                 </h2>
-                <p class="text-gray-400 text-base md:text-lg font-light mb-8">
+                <p class="text-gray-200 text-base md:text-lg font-light mb-8">
                     Un viaggio introspettivo synth-wave guidato da un groove ipnotico. Clicca sul player per scegliere la tua piattaforma preferita.
                 </p>
                 
-                <!-- Pulsante Trigger -->
-                <div class="inline-block text-left">
-                    <button id="listen-trigger" class="px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-all transform hover:scale-105 flex items-center gap-3">
+                <div class="inline-block text-left w-full md:w-auto">
+                    <button id="listen-trigger" class="w-full md:w-auto px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-all transform hover:scale-105 flex items-center justify-center gap-3">
                         <i class="fa-solid fa-play text-xs"></i> Ascolta ora
                     </button>
                     
-                    <!-- Pannello Link Espandibile -->
                     <div id="links-menu" class="links-panel flex flex-col gap-3 min-w-[280px]">
                         
-                        <!-- Spotify -->
-                        <a href="https://spotify.com" target="_blank" class="btn-spotify flex items-center justify-between px-5 py-3 bg-black/60 border border-gray-800 rounded-xl transition-all duration-300 group">
+                        <a href="#" target="_blank" class="btn-spotify flex items-center justify-between px-5 py-3 bg-black/60 border border-gray-800 rounded-xl transition-all duration-300 group">
                             <div class="flex items-center gap-3">
                                 <i class="fa-brands fa-spotify text-2xl text-[#1ed760]"></i>
                                 <span class="font-semibold text-sm group-hover:text-white text-gray-300">Spotify</span>
@@ -155,8 +155,7 @@
                             <i class="fa-solid fa-arrow-up-right-from-square text-xs text-gray-500 group-hover:text-white"></i>
                         </a>
 
-                        <!-- Apple Music -->
-                        <a href="https://music.apple.com" target="_blank" class="btn-apple flex items-center justify-between px-5 py-3 bg-black/60 border border-gray-800 rounded-xl transition-all duration-300 group">
+                        <a href="#" target="_blank" class="btn-apple flex items-center justify-between px-5 py-3 bg-black/60 border border-gray-800 rounded-xl transition-all duration-300 group">
                             <div class="flex items-center gap-3">
                                 <i class="fa-brands fa-apple text-2xl text-[#fc3c54]"></i>
                                 <span class="font-semibold text-sm group-hover:text-white text-gray-300">Apple Music</span>
@@ -164,8 +163,7 @@
                             <i class="fa-solid fa-arrow-up-right-from-square text-xs text-gray-500 group-hover:text-white"></i>
                         </a>
 
-                        <!-- YouTube -->
-                        <a href="https://youtube.com" target="_blank" class="btn-youtube flex items-center justify-between px-5 py-3 bg-black/60 border border-gray-800 rounded-xl transition-all duration-300 group">
+                        <a href="#" target="_blank" class="btn-youtube flex items-center justify-between px-5 py-3 bg-black/60 border border-gray-800 rounded-xl transition-all duration-300 group">
                             <div class="flex items-center gap-3">
                                 <i class="fa-brands fa-youtube text-2xl text-[#ff0000]"></i>
                                 <span class="font-semibold text-sm group-hover:text-white text-gray-300">YouTube Music</span>
@@ -180,19 +178,18 @@
 
     </main>
 
-    <!-- Importazione di Three.js e GSAP da CDN stabili -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
-    <script>
-       gsap.registerPlugin(ScrollTrigger);
+   <script>
+    gsap.registerPlugin(ScrollTrigger);
 
-    // --- INTERAZIONE UI ESPANDIBILE ---
+    // --- INTERAZIONE UI ---
     const listenBtn = document.getElementById('listen-trigger');
     const linksMenu = document.getElementById('links-menu');
-
+        
     listenBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         linksMenu.classList.toggle('open');
@@ -218,28 +215,25 @@
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping; 
+    renderer.toneMappingExposure = 0.95;
     container.appendChild(renderer.domElement);
 
-    // --- ILLUMINAZIONE NEON ---
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    // --- ILLUMINAZIONE ---
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
-    dirLight.position.set(2, 4, 5);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.6);
+    dirLight.position.set(5, 5, 4);
     scene.add(dirLight);
 
-    const pinkLight = new THREE.PointLight(0xff007f, 6, 15);
-    pinkLight.position.set(-4, 2, 3);
+    const pinkLight = new THREE.PointLight(0xff007f, 3.5, 15);
+    pinkLight.position.set(-4, 3, 4);
     scene.add(pinkLight);
 
-    const cyanLight = new THREE.PointLight(0x00f0ff, 6, 15);
-    cyanLight.position.set(4, -2, 3);
+    const cyanLight = new THREE.PointLight(0x00f0ff, 3.5, 15);
+    cyanLight.position.set(4, -3, 4);
     scene.add(cyanLight);
-
-    const rimLight = new THREE.PointLight(0xffffff, 3, 10);
-    rimLight.position.set(0, 0, -3);
-    scene.add(rimLight);
-
 
     let spoolLeftMesh, spoolRightMesh;
 
@@ -249,9 +243,11 @@
 
         const bodyGeo = new THREE.BoxGeometry(2.6, 1.7, 0.28);
         const bodyMat = new THREE.MeshStandardMaterial({ 
-            color: 0x160f29, 
-            roughness: 0.2,
-            metalness: 0.8
+            color: 0x09070f, 
+            roughness: 0.15,
+            metalness: 0.9,
+            clearcoat: 1.0, 
+            clearcoatRoughness: 0.1
         });
         const body = new THREE.Mesh(bodyGeo, bodyMat);
         group.add(body);
@@ -262,53 +258,44 @@
         const ctx = canvas.getContext('2d');
 
         const gradient = ctx.createLinearGradient(0, 0, 512, 256);
-        gradient.addColorStop(0, '#100c1e');
+        gradient.addColorStop(0, '#0d081b');
         gradient.addColorStop(0.5, '#ff007f');
         gradient.addColorStop(1, '#00f0ff');
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, 512, 256);
 
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.lineWidth = 4;
-        ctx.strokeRect(20, 20, 472, 216);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+        ctx.lineWidth = 6;
+        ctx.strokeRect(15, 15, 482, 226);
 
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 55px "Syne", sans-serif';
+        ctx.font = 'bold 50px "Syne", sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('GEGÈ', 256, 100);
+        ctx.fillText('GEGÈ', 256, 95);
 
         ctx.fillStyle = '#00f0ff';
-        ctx.font = 'bold 22px "Plus Jakarta Sans", sans-serif';
-        ctx.fillText('SIDE A  •  DON\'T FEEL A THING', 256, 160);
+        ctx.font = 'bold 20px "Plus Jakarta Sans", sans-serif';
+        ctx.fillText('SIDE A  •  DON\'T FEEL A THING', 256, 165);
 
         const labelTexture = new THREE.CanvasTexture(canvas);
         const labelGeo = new THREE.BoxGeometry(1.9, 0.95, 0.29);
         const labelMat = new THREE.MeshStandardMaterial({ 
             map: labelTexture,
-            roughness: 0.4,
-            metalness: 0.1
+            roughness: 0.3,
+            metalness: 0.2
         });
         const label = new THREE.Mesh(labelGeo, labelMat);
         label.position.set(0, 0.1, 0);
         group.add(label);
 
         const windowGeo = new THREE.BoxGeometry(0.7, 0.3, 0.3);
-        const windowMat = new THREE.MeshStandardMaterial({ 
-            color: 0x0a0518, 
-            roughness: 0.1,
-            transparent: true,
-            opacity: 0.8
-        });
+        const windowMat = new THREE.MeshStandardMaterial({ color: 0x030206 });
         const windowMesh = new THREE.Mesh(windowGeo, windowMat);
         windowMesh.position.set(0, -0.4, 0.01);
         group.add(windowMesh);
 
-        const spoolGeo = new THREE.CylinderGeometry(0.18, 0.18, 0.31, 24);
-        const spoolMat = new THREE.MeshStandardMaterial({ 
-            color: 0xffffff, 
-            metalness: 0.9,
-            roughness: 0.1
-        });
+        const spoolGeo = new THREE.CylinderGeometry(0.18, 0.18, 0.31, 32);
+        const spoolMat = new THREE.MeshStandardMaterial({ color: 0xdedede, roughness: 0.2, metalness: 0.5 });
 
         spoolLeftMesh = new THREE.Mesh(spoolGeo, spoolMat);
         spoolLeftMesh.rotation.x = Math.PI / 2;
@@ -319,137 +306,153 @@
         spoolRightMesh.position.set(0.55, 0.1, 0);
         group.add(spoolRightMesh);
 
-        const innerHoleGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.32, 16);
-        const innerHoleMat = new THREE.MeshBasicMaterial({ color: 0x030306 });
-        
-        const innerHoleLeft = new THREE.Mesh(innerHoleGeo, innerHoleMat);
-        innerHoleLeft.rotation.x = Math.PI / 2;
-        innerHoleLeft.position.set(-0.55, 0.1, 0);
-        group.add(innerHoleLeft);
-
-        const innerHoleRight = innerHoleLeft.clone();
-        innerHoleRight.position.set(0.55, 0.1, 0);
-        group.add(innerHoleRight);
-
         scene.add(group);
         return group;
     }
 
-    // --- CARICAMENTO MODELLO O FALLBACK ---
+    // --- CARICAMENTO E SETUP ---
     const loader = new THREE.GLTFLoader();
-    let cassette;
+    let modelGroup = new THREE.Group(); 
+    scene.add(modelGroup);
 
     loader.load(
         '/cassette-tape/source/cassette_tape_02.glb', 
         (gltf) => {
-            cassette = gltf.scene;
+            const cassette = gltf.scene;
             const box = new THREE.Box3().setFromObject(cassette);
             const center = box.getCenter(new THREE.Vector3());
-            cassette.position.sub(center);
-            
-            const wrapper = new THREE.Group();
-            wrapper.add(cassette);
-            scene.add(wrapper);
-            wrapper.scale.set(1.6, 1.6, 1.6);
-            
-            initScrollAnimations(wrapper);
+            cassette.position.sub(center); 
+            modelGroup.add(cassette);
+            initScrollAnimations();
         },
         undefined,
         (error) => {
-            console.warn("Modello GLTF non trovato. Attivazione cassetta 3D procedurale premium.");
-            cassette = createHighFidelityProceduralCassette();
-            initScrollAnimations(cassette);
+            console.warn("Utilizzo cassetta procedurale premium.");
+            const procedural = createHighFidelityProceduralCassette();
+            modelGroup.add(procedural);
+            initScrollAnimations();
         }
     );
 
-    // --- NUOVA ANIMAZIONE GSAP OTTIMIZZATA ---
-    function initScrollAnimations(targetMesh) {
-        
-        // Calcoliamo la posizione laterale in base alla larghezza dello schermo per evitare sovrapposizioni
+    // --- VARIABILE PER TRACCIARE LO SCROLL ---
+    let scrollProgress = 0;
+    let scrollTween; 
+
+    // --- ANIMAZIONI SCROLL CON DISSOLVENZA INCROCIATA (CROSSFADE) ---
+    function initScrollAnimations() {
+        if (scrollTween) scrollTween.kill();
+
         const isMobile = window.innerWidth < 768;
-        const sideX = isMobile ? 0 : 1.8;
-        const sideY = isMobile ? -1.2 : 0.4;
+        const responsiveX = Math.min(window.innerWidth / 420, 3.2); 
 
-        // 1. STATO INIZIALE (Sezione 1)
-        // La cassetta si trova sulla destra (o centrata in basso su mobile), leggermente inclinata
-        targetMesh.position.set(sideX, sideY, 1.5);
-        targetMesh.rotation.set(0.3, -0.5, 0.1);
+        modelGroup.scale.set(1.2, 1.2, 1.2);
 
-        // Creiamo un'animazione di hovering continuo e indipendente (mentre l'utente NON scende)
-        const hoverPos = gsap.to(targetMesh.position, {
-            y: `+=${isMobile ? 0.05 : 0.15}`,
-            duration: 2.5,
-            repeat: -1,
-            yoyo: true,
-            ease: "sine.inOut"
+        // STATO INIZIALE ELEMENTI
+        gsap.set(modelGroup.position, {
+            x: isMobile ? 0 : responsiveX,
+            y: isMobile ? 1.1 : 0.1,
+            z: 0
         });
+        gsap.set(modelGroup.rotation, { x: 0.4, y: -0.6, z: 0.1 });
         
-        const hoverRot = gsap.to(targetMesh.rotation, {
-            y: "+=0.08",
-            x: "+=0.04",
-            duration: 3,
-            repeat: -1,
-            yoyo: true,
-            ease: "sine.inOut"
-        });
+        // Se siamo su mobile nascondiamo subito la seconda sezione e teniamo accesa la prima
+        if (isMobile) {
+            gsap.set("#section-2", { opacity: 0, pointerEvents: "none" });
+            gsap.set("#section-1", { opacity: 1, pointerEvents: "auto" });
+        } else {
+            gsap.set(["#section-1", "#section-2"], { opacity: 1, pointerEvents: "auto" });
+        }
 
-        // 2. TIMELINE DI SCROLL
-        // Si attiva non appena l'utente inizia a scrollare oltre la prima sezione
-        const tl = gsap.timeline({
+        // Area di scroll ridotta (300px per una risposta immediata)
+        scrollTween = gsap.timeline({
             scrollTrigger: {
-                trigger: ".scroll-section", // Inizia quando la prima sezione si muove
+                trigger: "main",
                 start: "top top",
-                end: "bottom top", 
-                scrub: 1, // Tempo di risposta allo scroll (più basso = più reattivo)
+                end: isMobile ? "+=300" : "+=700", 
+                scrub: 0.4, 
+                snap: {
+                    snapTo: 1,          
+                    duration: 0.3,    
+                    ease: "power1.out"
+                },
                 onUpdate: (self) => {
-                    // Mette in pausa o rallenta il micro-hovering durante lo scroll per evitare scatti
-                    if (self.progress > 0.05) {
-                        hoverPos.pause();
-                        hoverRot.pause();
-                    } else {
-                        hoverPos.play();
-                        hoverRot.play();
-                    }
+                    scrollProgress = self.progress;
                 }
             }
         });
 
-        // EFFETTO FLIP: Viaggia a sinistra ed esegue una rotazione coreografica a 360°
-        tl.to(targetMesh.position, {
-            x: isMobile ? 0 : -1.8,
-            y: isMobile ? -1.0 : -0.2, // Si riposiziona perfettamente di fianco al testo del singolo
-            z: 2.0, // Si avvicina leggermente alla camera (effetto zoom d'impatto)
-            ease: "power2.inOut"
+        // MOVIMENTO MODELLO 3D
+        scrollTween.to(modelGroup.position, {
+            x: isMobile ? 0 : -responsiveX,
+            y: isMobile ? -1.1 : -0.1,
+            z: 0.6,
+            ease: "none" 
         }, 0);
 
-        tl.to(targetMesh.rotation, {
-            x: Math.PI * 2 + 0.2, // Rotazione completa + leggera inclinazione
-            y: Math.PI * 2 - 0.4, 
-            z: Math.PI * 2,
-            ease: "power2.inOut"
+        // ROTAZIONE MODELLO 3D
+        scrollTween.to(modelGroup.rotation, {
+            x: 0.1, 
+            y: Math.PI * 2 + 0.6, 
+            z: -0.2,
+            ease: "none"
         }, 0);
+
+        // EFFETTO DISSOLVENZA SOLO SU MOBILE (Nasconde la pagina 1 e rivela la pagina 2 gradualmente)
+        if (isMobile) {
+            scrollTween.to("#section-1", {
+                opacity: 0,
+                duration: 0.4,
+                ease: "power1.out"
+            }, 0);
+
+            scrollTween.to("#section-2", {
+                opacity: 1,
+                duration: 0.6,
+                ease: "power1.in",
+                onStart: () => gsap.set("#section-2", { pointerEvents: "auto" }),
+                onReverseComplete: () => gsap.set("#section-2", { pointerEvents: "none" })
+            }, 0.2);
+        }
     }
 
-    // --- ANIMATION LOOP ---
+    // --- LOOP DI ANIMAZIONE ---
+    const clock = new THREE.Clock();
+    let lastProgress = 0;
+    
     function animate() {
         requestAnimationFrame(animate);
+        const elapsedTime = clock.getElapsedTime();
 
-        // Rotazione continua dei rocchetti interni (effetto nastro che gira)
-        if (spoolLeftMesh && spoolRightMesh) {
-            spoolLeftMesh.rotation.y += 0.02;
-            spoolRightMesh.rotation.y += 0.02;
+        pinkLight.position.x = Math.sin(elapsedTime * 0.5) * 5;
+        pinkLight.position.z = 4 + Math.cos(elapsedTime * 0.5);
+
+        cyanLight.position.x = Math.cos(elapsedTime * 0.5) * 5;
+        cyanLight.position.z = 4 + Math.sin(elapsedTime * 0.5);
+
+        if (modelGroup) {
+            modelGroup.position.y += Math.sin(elapsedTime * 2) * 0.0008;
+            modelGroup.rotation.z += Math.cos(elapsedTime * 1) * 0.0004;
         }
 
+        if (spoolLeftMesh && spoolRightMesh) {
+            const deltaScroll = Math.abs(scrollProgress - lastProgress);
+            const spoolSpeed = deltaScroll * 18 + 0.005;
+            spoolLeftMesh.rotation.y += spoolSpeed;
+            spoolRightMesh.rotation.y += spoolSpeed;
+        }
+        lastProgress = scrollProgress;
+
+        camera.lookAt(scene.position);
         renderer.render(scene, camera);
     }
     animate();
 
-    // Gestione Responsive
     window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
+        initScrollAnimations(); 
     });
-    </script>
+</script>
 </body>
 </html>
