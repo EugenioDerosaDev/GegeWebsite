@@ -380,13 +380,247 @@
     }
 }
 
+
+
+    .language-gate {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        background:
+            radial-gradient(circle at 20% 20%, rgba(255, 0, 127, 0.16), transparent 34%),
+            radial-gradient(circle at 80% 80%, rgba(0, 240, 255, 0.13), transparent 36%),
+            rgba(3, 3, 6, 0.90);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        transition: opacity .5s cubic-bezier(.22, 1, .36, 1), visibility .5s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .language-gate.hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+
+    .language-box {
+        width: min(520px, 100%);
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: clamp(1rem, 4vw, 1.35rem);
+        align-items: center;
+        justify-content: center;
+    }
+
+    .language-choice {
+        position: relative;
+        aspect-ratio: 1 / 1;
+        min-height: 138px;
+        border: 1px solid rgba(255,255,255,.13);
+        border-radius: 1.65rem;
+        background:
+            radial-gradient(circle at 30% 20%, rgba(255,255,255,.12), transparent 42%),
+            rgba(255,255,255,.055);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        cursor: pointer;
+        box-shadow:
+            0 24px 80px rgba(0,0,0,.44),
+            inset 0 1px 0 rgba(255,255,255,.10);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        transform: translateY(12px) scale(.96);
+        opacity: 0;
+        animation: languageCardIn .7s cubic-bezier(.22, 1, .36, 1) forwards;
+        transition: transform .28s ease, border-color .28s ease, background .28s ease, box-shadow .28s ease;
+    }
+
+    .language-choice:nth-child(2) { animation-delay: .08s; }
+
+    .language-choice::before {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(135deg, rgba(255,255,255,.28), rgba(255,255,255,.03), rgba(0,240,255,.22));
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+    .language-choice::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        background: radial-gradient(circle, rgba(255,255,255,.18), transparent 58%);
+        transition: opacity .28s ease;
+        pointer-events: none;
+    }
+
+    .language-choice:hover {
+        transform: translateY(-4px) scale(1.015);
+        border-color: rgba(0,240,255,.44);
+        background:
+            radial-gradient(circle at 30% 20%, rgba(255,255,255,.17), transparent 42%),
+            rgba(255,255,255,.085);
+        box-shadow:
+            0 26px 90px rgba(0,0,0,.46),
+            0 0 42px rgba(0,240,255,.12),
+            inset 0 1px 0 rgba(255,255,255,.13);
+    }
+
+    .language-choice:hover::after { opacity: 1; }
+
+    .language-flag {
+        position: relative;
+        z-index: 1;
+        display: block;
+        font-size: clamp(4.6rem, 15vw, 7.2rem);
+        line-height: 1;
+        filter: drop-shadow(0 14px 24px rgba(0,0,0,.35));
+        transform: translateZ(0);
+    }
+
+    @keyframes languageCardIn {
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .language-switcher {
+        position: fixed;
+        right: calc(env(safe-area-inset-right) + 1rem);
+        bottom: calc(env(safe-area-inset-bottom) + 1rem);
+        z-index: 12;
+        display: flex;
+        gap: .4rem;
+        padding: .35rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,.10);
+        background: rgba(0,0,0,.42);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 18px 50px rgba(0,0,0,.35);
+    }
+
+    .lang-mini {
+        width: 2.25rem;
+        height: 2.25rem;
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        color: rgba(255,255,255,.66);
+        font-size: .72rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: background .22s ease, color .22s ease, transform .22s ease;
+    }
+
+    .lang-mini:hover {
+        transform: translateY(-1px);
+        color: white;
+    }
+
+    .lang-mini.active {
+        background: white;
+        color: black;
+    }
+
+    @media (max-width: 767px) {
+        .language-box {
+            width: min(340px, 100%);
+            gap: .85rem;
+        }
+
+        .language-choice {
+            min-height: 128px;
+            border-radius: 1.35rem;
+        }
+
+        .language-switcher {
+            right: 1rem;
+            bottom: 1rem;
+            transform: scale(.94);
+            transform-origin: right bottom;
+        }
+    }
+
     @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
     }
+    @media (max-width: 767px) {
+    #section-2 .flex.items-start {
+        gap: 1rem;
+    }
+
+    #section-2 img {
+        width: 84px;
+    }
+}
+.release-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: clamp(0.9rem, 2.5vw, 1.5rem);
+    margin-bottom: 1rem;
+}
+
+.release-title {
+    font-size: clamp(3rem, 6.2vw, 4.5rem);
+    max-width: 100%;
+}
+
+.release-cover {
+    width: clamp(92px, 12vw, 132px);
+    aspect-ratio: 1 / 1;
+    border-radius: 1rem;
+    object-fit: cover;
+    object-position: center;
+    box-shadow: 0 22px 58px rgba(0,0,0,.45);
+    flex-shrink: 0;
+}
+
+@media (max-width: 767px) {
+    .release-header {
+        gap: .75rem;
+    }
+
+    .release-title {
+        font-size: clamp(2.35rem, 11vw, 3.15rem);
+    }
+
+    .release-cover {
+        width: clamp(74px, 22vw, 92px);
+        border-radius: .8rem;
+    }
+}
 </style>
 
 </head>
 <body>
+
+<div id="language-gate" class="language-gate" aria-label="Language selection">
+    <div class="language-box">
+        <button class="language-choice" data-lang-choice="it" type="button" aria-label="Italiano">
+            <span class="language-flag" aria-hidden="true">🇮🇹</span>
+        </button>
+        <button class="language-choice" data-lang-choice="en" type="button" aria-label="English">
+            <span class="language-flag" aria-hidden="true">🇺🇸</span>
+        </button>
+    </div>
+</div>
+
+<div class="language-switcher" aria-label="Language selector">
+    <button class="lang-mini" data-lang-switch="it" type="button">IT</button>
+    <button class="lang-mini" data-lang-switch="en" type="button">EN</button>
+</div>
+
 
 <div class="bg-glow-pink"></div>
 <div class="bg-glow-blue"></div>
@@ -399,15 +633,13 @@
 
     <section id="section-1" class="scroll-section px-6 md:px-24">
         <div class="glass-card w-full max-w-[620px] bg-black/40 backdrop-blur-md p-6 md:p-8 rounded-2xl border border-white/5 shadow-2xl">
-            <span class="text-xs uppercase tracking-[0.3em] text-[#00f0ff] font-semibold mb-2 block">Official Artist Profile</span>
+            <span class="text-xs uppercase tracking-[0.3em] text-[#00f0ff] font-semibold mb-2 block" data-i18n="profileEyebrow">Official Artist Profile</span>
             <h1 class="font-syne title-gege font-extrabold tracking-tight mb-6">GEGÈ</h1>
-            <p class="text-gray-200 text-lg md:text-xl font-light leading-relaxed mb-8">
-                Just a music lover exploring sounds. Guided by old-school roots and new frequencies, my goal is simple: putting the focus back on the feeling.
-            </p>
+            <p class="text-gray-200 text-lg md:text-xl font-light leading-relaxed mb-8" data-i18n="artistBio">Just a music lover exploring sounds. Guided by old-school roots and new frequencies, my goal is simple: putting the focus back on the feeling.</p>
             <div class="profile-bottom text-sm text-gray-400">
                 <div class="flex items-center gap-2">
                     <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                    <span>New release available below</span>
+                    <span data-i18n="newReleaseStatus">New release available below</span>
                 </div>
 
                 <div class="profile-socials" aria-label="Social links">
@@ -421,17 +653,23 @@
 
     <section id="section-2" class="scroll-section px-6 md:px-24 justify-end">
         <div class="glass-card max-w-xl w-full text-right md:text-left md:ml-auto bg-black/40 backdrop-blur-md p-6 md:p-8 rounded-2xl border border-white/5 shadow-2xl">
-            <span class="text-xs uppercase tracking-[0.3em] text-[#ff007f] font-semibold mb-2 block">New Single Out Now</span>
-            <h2 class="font-syne text-5xl md:text-7xl font-extrabold tracking-tight leading-none mb-4">
-                Don't feel<br>a thing
-            </h2>
-            <p class="text-gray-200 text-base md:text-lg font-light mb-8 leading-relaxed">
-A fresh, feel-good house pop track crafted for warm days. Good energy and a groove meant to be shared. Take a listen and join my journey from the very beginning.            </p>
+            <span class="text-xs uppercase tracking-[0.3em] text-[#ff007f] font-semibold mb-2 block" data-i18n="singleEyebrow">
+    New Single Out Now
+</span>
+
+<div class="release-header">
+    <h2 class="font-syne release-title font-extrabold tracking-tight leading-none" data-i18n="singleTitle">
+        Don't feel<br>a thing
+    </h2>
+
+    <img
+        src="coverart_rel-2.png"
+        alt="Don't Feel a Thing cover"
+        class="release-cover">
+</div><p class="text-gray-200 text-base md:text-lg font-light mb-8 leading-relaxed" data-i18n="singleDescription">A fresh, feel-good house pop track crafted for warm days. Good energy and a groove meant to be shared. Take a listen and join my journey from the very beginning.</p>
 
             <div class="inline-block text-left w-full md:w-auto">
-                <button id="listen-trigger" class="btn-premium w-full md:w-auto px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-all transform hover:scale-105 flex items-center justify-center gap-3">
-                    <i class="fa-solid fa-play text-xs"></i> Ascolta ora
-                </button>
+                <button id="listen-trigger" class="btn-premium w-full md:w-auto px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-all transform hover:scale-105 flex items-center justify-center gap-3" type="button"></button>
 
                 <div id="links-menu" class="links-panel flex flex-col gap-3 min-w-[280px]">
                     <a href="#" target="_blank" class="listen-link btn-spotify flex items-center justify-between px-5 py-3 bg-black/60 border border-gray-800 rounded-xl duration-300 group">
@@ -472,6 +710,89 @@ A fresh, feel-good house pop track crafted for warm days. Good energy and a groo
 <script>
     gsap.registerPlugin(ScrollTrigger);
 
+
+    const translations = {
+        it: {
+            pageTitle: "Gegè - Pagina ufficiale artista",
+            profileEyebrow: "Profilo ufficiale artista",
+            artistBio: "Guidato dalla musica Disco anni '80 e la House contemporanea, il mio obiettivo è semplice: rimettere il focus sulle emozioni.",
+            newReleaseStatus: "Nuova uscita disponibile qui sotto",
+            singleEyebrow: "Nuovo singolo fuori ora",
+            singleTitle: "Don't feel<br>a thing",
+            singleDescription: "Un brano house pop fresco e che ti fa sentire bene, pensato per le giornate estive. Vibe positiva e groove per essere condiviso. Unisciti al mio viaggio fin dall’inizio.",
+            listen: "Ascolta ora",
+            close: "Chiudi"
+        },
+        en: {
+            pageTitle: "Gegè - Official Artist Page",
+            profileEyebrow: "Official Artist Profile",
+            artistBio: "Guided by the music of the 80s and contemporary house, my goal is simple: putting the focus back on the feeling.",
+            newReleaseStatus: "New release available below",
+            singleEyebrow: "New Single Out Now",
+            singleTitle: "Don't feel<br>a thing",
+            singleDescription: "A fresh, feel-good house pop track crafted for summer days. Good energy and a groove meant to be shared. Take a listen and join my journey from the very beginning.",
+            listen: "Listen now",
+            close: "Close"
+        }
+    };
+
+    let currentLanguage = localStorage.getItem('gege-language') || 'it';
+    let modelIsReady = false;
+    let languageWasChosen = false;
+
+    function setLanguage(lang) {
+        currentLanguage = translations[lang] ? lang : 'it';
+        localStorage.setItem('gege-language', currentLanguage);
+        document.documentElement.lang = currentLanguage;
+        document.title = translations[currentLanguage].pageTitle;
+
+        document.querySelectorAll('[data-i18n]').forEach((el) => {
+            const key = el.dataset.i18n;
+            if (translations[currentLanguage][key]) el.innerHTML = translations[currentLanguage][key];
+        });
+
+        document.querySelectorAll('[data-lang-switch]').forEach((btn) => {
+            btn.classList.toggle('active', btn.dataset.langSwitch === currentLanguage);
+        });
+
+        updateListenButton();
+    }
+
+    function updateListenButton() {
+        const btn = document.getElementById('listen-trigger');
+        const menu = document.getElementById('links-menu');
+        if (!btn || !menu) return;
+        const isOpen = menu.classList.contains('open');
+        btn.innerHTML = isOpen
+            ? `<i class="fa-solid fa-xmark text-xs"></i> ${translations[currentLanguage].close}`
+            : `<i class="fa-solid fa-play text-xs"></i> ${translations[currentLanguage].listen}`;
+    }
+
+    function maybeStartExperience() {
+        if (!modelIsReady || !languageWasChosen) return;
+
+        const gate = document.getElementById('language-gate');
+        gate.classList.add('hidden');
+
+        window.setTimeout(() => {
+            playCassetteIntro();
+        }, 170);
+    }
+
+    setLanguage(currentLanguage);
+
+    document.querySelectorAll('[data-lang-choice]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            setLanguage(btn.dataset.langChoice);
+            languageWasChosen = true;
+            maybeStartExperience();
+        });
+    });
+
+    document.querySelectorAll('[data-lang-switch]').forEach((btn) => {
+        btn.addEventListener('click', () => setLanguage(btn.dataset.langSwitch));
+    });
+
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     // --- INTRO CON CASSETTA 3D ---
@@ -503,16 +824,14 @@ A fresh, feel-good house pop track crafted for warm days. Good energy and a groo
         e.stopPropagation();
         linksMenu.classList.toggle('open');
         const isOpen = linksMenu.classList.contains('open');
-        listenBtn.innerHTML = isOpen
-            ? '<i class="fa-solid fa-xmark text-xs"></i> Chiudi'
-            : '<i class="fa-solid fa-play text-xs"></i> Ascolta ora';
+        updateListenButton();
 
         if (navigator.vibrate && window.innerWidth < 768) navigator.vibrate(12);
     });
 
     document.addEventListener('click', () => {
         linksMenu.classList.remove('open');
-        listenBtn.innerHTML = '<i class="fa-solid fa-play text-xs"></i> Ascolta ora';
+        updateListenButton();
     });
 
     document.querySelectorAll('.glass-card').forEach(card => {
@@ -734,7 +1053,8 @@ A fresh, feel-good house pop track crafted for warm days. Good energy and a groo
             fitModelToView(cassette);
             modelGroup.add(cassette);
             initScrollAnimations();
-            playCassetteIntro();
+            modelIsReady = true;
+            maybeStartExperience();
         },
         undefined,
         () => {
@@ -742,7 +1062,8 @@ A fresh, feel-good house pop track crafted for warm days. Good energy and a groo
             const procedural = createHighFidelityProceduralCassette();
             modelGroup.add(procedural);
             initScrollAnimations();
-            playCassetteIntro();
+            modelIsReady = true;
+            maybeStartExperience();
         }
     );
 
