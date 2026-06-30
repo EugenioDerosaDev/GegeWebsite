@@ -324,27 +324,28 @@
     @media (max-width: 767px) {
 
     main{
-        min-height:200vh;
+        min-height:200svh;
     }
 
     .scroll-section{
-        min-height:100dvh;
+        min-height:100svh;
         display:flex;
-        justify-content:flex-start;
-        align-items:flex-start;
-        padding-top:7.6rem;
-        padding-bottom:4rem;
+        padding-left:1.25rem;
+        padding-right:1.25rem;
     }
 
     #section-1{
         align-items:flex-start;
+        justify-content:flex-start;
+        padding-top:calc(env(safe-area-inset-top) + 5.8rem);
+        padding-bottom:2rem;
     }
 
     #section-2{
-        justify-content:flex-end;
         align-items:flex-end;
-        padding-top:4rem;
-        padding-bottom:5.5rem;
+        justify-content:flex-end;
+        padding-top:2rem;
+        padding-bottom:calc(env(safe-area-inset-bottom) + 2rem);
     }
 
     .scroll-section > div{
@@ -352,11 +353,15 @@
         max-width:100%;
     }
 
+    #section-2 > div{
+        margin-bottom:0;
+    }
+
     .title-gege{
-    font-size: clamp(2.5rem, 15vw, 4.2rem);
-    line-height: 1;
-    letter-spacing: -0.06em;
-}
+        font-size: clamp(2.5rem, 15vw, 4.2rem);
+        line-height: 1;
+        letter-spacing: -0.06em;
+    }
 
     .scene-shadow{
         top:57%;
@@ -722,7 +727,7 @@ A fresh, feel-good house pop track crafted for warm days. Good energy and a groo
     }
 
     loader.load(
-        'cassette-tape/source/cassette_tape_02.glb',
+        'public/cassette-tape/source/cassette_tape_02.glb',
         (gltf) => {
             const cassette = gltf.scene;
             polishImportedModel(cassette);
@@ -874,8 +879,12 @@ A fresh, feel-good house pop track crafted for warm days. Good energy and a groo
         requestAnimationFrame(step);
     }
 
+    function getViewportHeight() {
+        return window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    }
+
     function getSecondPageTargetY() {
-        return document.documentElement.scrollHeight - window.innerHeight;
+        return Math.max(0, document.documentElement.scrollHeight - getViewportHeight());
     }
 
     function snapToDirection(direction) {
@@ -988,16 +997,21 @@ A fresh, feel-good house pop track crafted for warm days. Good energy and a groo
     animate();
 
     let resizeTimer;
-    window.addEventListener('resize', () => {
+    function handleViewportResize() {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
-            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.aspect = window.innerWidth / getViewportHeight();
             camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setSize(window.innerWidth, getViewportHeight());
             initScrollAnimations();
             ScrollTrigger.refresh();
         }, 120);
-    });
+    }
+
+    window.addEventListener('resize', handleViewportResize);
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', handleViewportResize);
+    }
 </script>
 
 </body>
