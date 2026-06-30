@@ -1088,10 +1088,14 @@ window.scrollTo(0, 0);
         const settle = smoothstep(progress);
 
         return {
-            scale: isMobile
-                ? gsap.utils.interpolate(1.16, 1.22, settle) + dolly * 0.075
-                : gsap.utils.interpolate(1.08, 1.20, settle) + dolly * 0.12,
+            const desktopScale =
+    window.innerWidth > 1800 ? 0.82 :
+    window.innerWidth > 1500 ? 0.88 :
+    1.0;
 
+scale: isMobile
+    ? gsap.utils.interpolate(1.16, 1.22, settle) + dolly * 0.075
+    : gsap.utils.interpolate(desktopScale, desktopScale + 0.12, settle) + dolly * 0.08,
             x: isMobile
                 ? gsap.utils.interpolate(0, 0, cinematic)
                 : gsap.utils.interpolate(side, -side * 0.82, cinematic),
