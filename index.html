@@ -563,15 +563,7 @@
     @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
     }
-    @media (max-width: 767px) {
-    #section-2 .flex.items-start {
-        gap: 1rem;
-    }
-
-    #section-2 img {
-        width: 84px;
-    }
-}
+   
 .release-header {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -584,30 +576,35 @@
     font-size: clamp(3rem, 6.2vw, 4.5rem);
     max-width: 100%;
 }
-
-.release-cover {
-    width: clamp(92px, 12vw, 132px);
-    aspect-ratio: 1 / 1;
-    border-radius: 1rem;
+.release-cover{
+    width: clamp(160px, 20vw, 310px);
+    aspect-ratio: 1;
     object-fit: cover;
-    object-position: center;
-    box-shadow: 0 22px 58px rgba(0,0,0,.45);
+    border-radius: 1rem;
     flex-shrink: 0;
 }
 
 @media (max-width: 767px) {
-    .release-header {
-        gap: .75rem;
+
+    .release-header{
+        gap: 1rem;
+        align-items: center;
     }
+
+
+    .release-cover{
+        width: clamp(90px, 26vw, 120px);
+        border-radius:.8rem;
+    }
+
+
+
 
     .release-title {
         font-size: clamp(2.35rem, 11vw, 3.15rem);
     }
 
-    .release-cover {
-        width: clamp(74px, 22vw, 92px);
-        border-radius: .8rem;
-    }
+    
 }
 </style>
 
@@ -718,7 +715,10 @@
 
 <script>
     gsap.registerPlugin(ScrollTrigger);
-
+if ("scrollRestoration" in history) {
+    history.scrollRestoration = "manual";
+}
+window.scrollTo(0, 0);
 
     const translations = {
         it: {
@@ -1055,7 +1055,7 @@
     }
 
     loader.load(
-        'cassette-tape/source/cassette_tape_02.glb',
+        '/cassette-tape/source/cassette_tape_02.glb',
         (gltf) => {
             const cassette = gltf.scene;
             polishImportedModel(cassette);
@@ -1114,14 +1114,24 @@
     let scrollTween;
 
     const sectionSnap = {
-        activeIndex: window.scrollY > window.innerHeight * 0.5 ? 1 : 0,
-        locked: false,
+activeIndex: 0,        locked: false,
         cooldown: false,
         touchStartY: 0,
         touchStartX: 0,
         touchConsumed: false,
         duration: reduceMotion ? 0 : 920
     };
+    // All'apertura della pagina si parte sempre dalla sezione 1
+window.addEventListener("load", () => {
+    sectionSnap.activeIndex = 0;
+    motion.progress = 0;
+    motion.targetProgress = 0;
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+
+    if ("scrollRestoration" in history) {
+        history.scrollRestoration = "manual";
+    }
+});
 
     function initScrollAnimations() {
         if (scrollTween) scrollTween.kill();
