@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gegè - Official Artist Page</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +16,11 @@
         --pink: #ff007f;
         --cyan: #00f0ff;
         --bg: #030306;
+        --mx: 50%;
+        --my: 50%;
     }
+
+    * { box-sizing: border-box; }
 
     html, body {
         margin: 0;
@@ -44,11 +49,8 @@
         height: 100dvh;
         z-index: 1;
         pointer-events: none;
-        opacity: 0;
-        animation: canvasReveal 1.2s ease forwards .2s;
+        opacity: 1;
     }
-
-    @keyframes canvasReveal { to { opacity: 1; } }
 
     main {
         min-height: 200vh;
@@ -72,6 +74,9 @@
         backface-visibility: hidden;
         -webkit-font-smoothing: antialiased;
         transform: translateZ(0);
+        box-shadow:
+            0 26px 90px rgba(0,0,0,.42),
+            inset 0 1px 0 rgba(255,255,255,.08);
     }
 
     .glass-card::before {
@@ -80,12 +85,27 @@
         inset: -1px;
         border-radius: inherit;
         padding: 1px;
-        background: linear-gradient(135deg, rgba(255,255,255,.22), rgba(255,255,255,.02), rgba(0,240,255,.16));
+        background: linear-gradient(135deg, rgba(255,255,255,.24), rgba(255,255,255,.025), rgba(0,240,255,.18));
         -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
         -webkit-mask-composite: xor;
         mask-composite: exclude;
         pointer-events: none;
     }
+
+    .glass-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        opacity: .58;
+        pointer-events: none;
+        background:
+            radial-gradient(circle at var(--mx) var(--my), rgba(255,255,255,.18), transparent 23%),
+            linear-gradient(125deg, rgba(255,255,255,.09), transparent 34%, rgba(0,240,255,.055));
+        mix-blend-mode: screen;
+        transition: opacity .28s ease;
+    }
+
+    .glass-card > * { position: relative; z-index: 1; }
 
     .title-gege {
         font-size: clamp(3.2rem, 14vw, 7.2rem);
@@ -102,18 +122,52 @@
     .links-panel {
         max-height: 0;
         opacity: 0;
-        transform: translateY(-8px) scale(.98);
-        transition: max-height .55s cubic-bezier(.22, 1, .36, 1), opacity .35s ease, transform .45s cubic-bezier(.22, 1, .36, 1), margin .35s ease;
+        transform: translateY(-10px) scale(.985);
+        transition:
+            max-height .58s cubic-bezier(.22, 1, .36, 1),
+            opacity .35s ease,
+            transform .48s cubic-bezier(.22, 1, .36, 1),
+            margin .35s ease;
         overflow: hidden;
     }
 
     .links-panel.open {
-        max-height: 300px;
+        max-height: 330px;
         opacity: 1;
         transform: translateY(0) scale(1);
         margin-top: 1rem;
     }
 
+    .listen-link {
+        opacity: 0;
+        transform: translateY(9px) scale(.97);
+        transition: opacity .42s ease, transform .42s cubic-bezier(.22, 1, .36, 1), border-color .3s ease, box-shadow .3s ease;
+    }
+
+    .links-panel.open .listen-link { opacity: 1; transform: translateY(0) scale(1); }
+    .links-panel.open .listen-link:nth-child(1) { transition-delay: .03s; }
+    .links-panel.open .listen-link:nth-child(2) { transition-delay: .095s; }
+    .links-panel.open .listen-link:nth-child(3) { transition-delay: .16s; }
+
+    .btn-premium {
+        position: relative;
+        isolation: isolate;
+        box-shadow: 0 14px 34px rgba(255,255,255,.08);
+    }
+
+    .btn-premium::before {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: inherit;
+        background: linear-gradient(90deg, rgba(255,0,127,.45), rgba(0,240,255,.46), rgba(255,255,255,.7));
+        opacity: 0;
+        filter: blur(11px);
+        transition: opacity .3s ease;
+        z-index: -1;
+    }
+
+    .btn-premium:hover::before { opacity: .55; }
     .btn-spotify:hover { box-shadow: 0 0 24px rgba(30, 215, 96, 0.35); border-color: #1ed760; }
     .btn-apple:hover { box-shadow: 0 0 24px rgba(252, 60, 84, 0.35); border-color: #fc3c54; }
     .btn-youtube:hover { box-shadow: 0 0 24px rgba(255, 0, 0, 0.35); border-color: #ff0000; }
@@ -126,6 +180,7 @@
         z-index: 0;
         will-change: transform, opacity;
         mix-blend-mode: screen;
+        animation: glowBreath 8s ease-in-out infinite alternate;
     }
 
     .bg-glow-pink {
@@ -133,7 +188,7 @@
         height: 46vw;
         min-width: 320px;
         min-height: 320px;
-        background: radial-gradient(circle, rgba(255, 0, 127, 0.17) 0%, rgba(255, 0, 127, 0.05) 34%, transparent 68%);
+        background: radial-gradient(circle, rgba(255, 0, 127, 0.18) 0%, rgba(255, 0, 127, 0.055) 34%, transparent 68%);
         top: 8%;
         left: -16%;
     }
@@ -143,9 +198,41 @@
         height: 52vw;
         min-width: 360px;
         min-height: 360px;
-        background: radial-gradient(circle, rgba(0, 240, 255, 0.13) 0%, rgba(0, 240, 255, 0.04) 36%, transparent 70%);
+        background: radial-gradient(circle, rgba(0, 240, 255, 0.145) 0%, rgba(0, 240, 255, 0.045) 36%, transparent 70%);
         bottom: -10%;
         right: -14%;
+        animation-duration: 9.5s;
+        animation-delay: -2.4s;
+    }
+
+    @keyframes glowBreath {
+        from { scale: 1; filter: blur(10px); }
+        to { scale: 1.08; filter: blur(14px); }
+    }
+
+    .particles {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    .particle {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        border-radius: 999px;
+        background: rgba(255,255,255,.45);
+        opacity: .18;
+        animation: particleFloat linear infinite;
+    }
+
+    @keyframes particleFloat {
+        from { transform: translate3d(0, 12vh, 0); opacity: 0; }
+        18% { opacity: .18; }
+        80% { opacity: .12; }
+        to { transform: translate3d(0, -112vh, 0); opacity: 0; }
     }
 
     .grain {
@@ -158,6 +245,75 @@
         mix-blend-mode: soft-light;
     }
 
+    .scene-shadow {
+        position: fixed;
+        left: 50%;
+        top: 58%;
+        width: min(560px, 70vw);
+        height: min(110px, 18vw);
+        border-radius: 999px;
+        transform: translate(-50%, -50%) rotate(-8deg);
+        z-index: 1;
+        pointer-events: none;
+        opacity: 0;
+        background: radial-gradient(ellipse, rgba(0, 240, 255, .18) 0%, rgba(255, 0, 127, .09) 42%, transparent 72%);
+        filter: blur(22px);
+        mix-blend-mode: screen;
+    }
+
+
+    .social-dot {
+        width: 2.4rem;
+        height: 2.4rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255,255,255,.1);
+        border-radius: 999px;
+        background: rgba(255,255,255,.045);
+        transition: transform .25s ease, background .25s ease, border-color .25s ease;
+    }
+
+    .social-dot:hover {
+        transform: translateY(-2px);
+        background: rgba(255,255,255,.09);
+        border-color: rgba(0,240,255,.28);
+    }
+
+    .social-dot.spotify:hover {
+        color: #1ed760;
+        border-color: rgba(30, 215, 96, .52);
+        box-shadow: 0 0 22px rgba(30, 215, 96, .22);
+    }
+
+    .social-dot.instagram:hover {
+        color: #ff4fd8;
+        border-color: rgba(255, 0, 127, .52);
+        box-shadow: 0 0 22px rgba(255, 0, 127, .22);
+    }
+
+    .social-dot.youtube:hover {
+        color: #ff2b2b;
+        border-color: rgba(255, 0, 0, .52);
+        box-shadow: 0 0 22px rgba(255, 0, 0, .22);
+    }
+
+    .profile-bottom {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 1.25rem;
+    }
+
+    .profile-socials {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: .75rem;
+        color: rgba(255,255,255,.78);
+        flex-shrink: 0;
+    }
+
     @media (min-width: 768px) {
         #section-2 {
             align-items: flex-end;
@@ -166,13 +322,62 @@
     }
 
     @media (max-width: 767px) {
-        main { min-height: 200vh; }
-        .scroll-section { min-height: 100dvh; align-items: flex-start; padding-top: 7rem; }
-        #section-2 { align-items: flex-end; padding-bottom: 2.2rem; }
-        .scroll-section > div { max-width: 100%; }
-        .title-gege { font-size: clamp(3rem, 21vw, 5.3rem); letter-spacing: -0.085em; }
+
+    main{
+        min-height:200vh;
     }
-    
+
+    .scroll-section{
+        min-height:100dvh;
+        display:flex;
+        justify-content:flex-start;
+        align-items:flex-start;
+        padding-top:7.6rem;
+        padding-bottom:4rem;
+    }
+
+    #section-1{
+        align-items:flex-start;
+    }
+
+    #section-2{
+        justify-content:flex-end;
+        align-items:flex-end;
+        padding-top:4rem;
+        padding-bottom:5.5rem;
+    }
+
+    .scroll-section > div{
+        width:100%;
+        max-width:100%;
+    }
+
+    .title-gege{
+    font-size: clamp(2.5rem, 15vw, 4.2rem);
+    line-height: 1;
+    letter-spacing: -0.06em;
+}
+
+    .scene-shadow{
+        top:57%;
+        width:74vw;
+    }
+
+    .profile-bottom{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:1.2rem;
+    }
+
+    .profile-socials{
+        width:100%;
+        justify-content:center;
+    }
+}
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+    }
 </style>
 
 </head>
@@ -180,8 +385,9 @@
 
 <div class="bg-glow-pink"></div>
 <div class="bg-glow-blue"></div>
+<div class="particles" id="particles"></div>
+<div class="scene-shadow" id="scene-shadow"></div>
 <div class="grain"></div>
-
 <div id="canvas-container"></div>
 
 <main class="relative z-10">
@@ -189,14 +395,21 @@
     <section id="section-1" class="scroll-section px-6 md:px-24">
         <div class="glass-card w-full max-w-[620px] bg-black/40 backdrop-blur-md p-6 md:p-8 rounded-2xl border border-white/5 shadow-2xl">
             <span class="text-xs uppercase tracking-[0.3em] text-[#00f0ff] font-semibold mb-2 block">Official Artist Profile</span>
-            <h1 class="font-syne title-gege font-extrabold tracking-tight mb-6">
-                GEGÈ
-            </h1>
+            <h1 class="font-syne title-gege font-extrabold tracking-tight mb-6">GEGÈ</h1>
             <p class="text-gray-200 text-lg md:text-xl font-light leading-relaxed mb-8">
-Just a music lover exploring sounds. Guided by old-school roots and new frequencies, my goal is simple: putting the focus back on the feeling.            </p>
-            <div class="flex items-center gap-2 text-sm text-gray-400">
-                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                <span>New release available below</span>
+                Just a music lover exploring sounds. Guided by old-school roots and new frequencies, my goal is simple: putting the focus back on the feeling.
+            </p>
+            <div class="profile-bottom text-sm text-gray-400">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <span>New release available below</span>
+                </div>
+
+                <div class="profile-socials" aria-label="Social links">
+                    <a href="#" target="_blank" rel="noopener" class="social-dot youtube" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#" target="_blank" rel="noopener" class="social-dot instagram" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" target="_blank" rel="noopener" class="social-dot spotify" aria-label="Spotify"><i class="fa-brands fa-spotify"></i></a>
+                </div>
             </div>
         </div>
     </section>
@@ -207,17 +420,16 @@ Just a music lover exploring sounds. Guided by old-school roots and new frequenc
             <h2 class="font-syne text-5xl md:text-7xl font-extrabold tracking-tight leading-none mb-4">
                 Don't feel<br>a thing
             </h2>
-            <p class="text-gray-200 text-base md:text-lg font-light mb-8">
-A fresh, feel-good house pop track crafted for warm days and long nights. Good energy and a groove meant to be shared. Take a listen and join my journey from the very beginning            </p>
+            <p class="text-gray-200 text-base md:text-lg font-light mb-8 leading-relaxed">
+A fresh, feel-good house pop track crafted for warm days. Good energy and a groove meant to be shared. Take a listen and join my journey from the very beginning.            </p>
 
             <div class="inline-block text-left w-full md:w-auto">
-                <button id="listen-trigger" class="w-full md:w-auto px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-all transform hover:scale-105 flex items-center justify-center gap-3">
-                    <i class="fa-solid fa-play text-xs"></i> Listen Now
+                <button id="listen-trigger" class="btn-premium w-full md:w-auto px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-all transform hover:scale-105 flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-play text-xs"></i> Ascolta ora
                 </button>
 
                 <div id="links-menu" class="links-panel flex flex-col gap-3 min-w-[280px]">
-
-                    <a href="#" target="_blank" class="btn-spotify flex items-center justify-between px-5 py-3 bg-black/60 border border-gray-800 rounded-xl transition-all duration-300 group">
+                    <a href="#" target="_blank" class="listen-link btn-spotify flex items-center justify-between px-5 py-3 bg-black/60 border border-gray-800 rounded-xl duration-300 group">
                         <div class="flex items-center gap-3">
                             <i class="fa-brands fa-spotify text-2xl text-[#1ed760]"></i>
                             <span class="font-semibold text-sm group-hover:text-white text-gray-300">Spotify</span>
@@ -225,7 +437,7 @@ A fresh, feel-good house pop track crafted for warm days and long nights. Good e
                         <i class="fa-solid fa-arrow-up-right-from-square text-xs text-gray-500 group-hover:text-white"></i>
                     </a>
 
-                    <a href="#" target="_blank" class="btn-apple flex items-center justify-between px-5 py-3 bg-black/60 border border-gray-800 rounded-xl transition-all duration-300 group">
+                    <a href="#" target="_blank" class="listen-link btn-apple flex items-center justify-between px-5 py-3 bg-black/60 border border-gray-800 rounded-xl duration-300 group">
                         <div class="flex items-center gap-3">
                             <i class="fa-brands fa-apple text-2xl text-[#fc3c54]"></i>
                             <span class="font-semibold text-sm group-hover:text-white text-gray-300">Apple Music</span>
@@ -233,14 +445,13 @@ A fresh, feel-good house pop track crafted for warm days and long nights. Good e
                         <i class="fa-solid fa-arrow-up-right-from-square text-xs text-gray-500 group-hover:text-white"></i>
                     </a>
 
-                    <a href="#" target="_blank" class="btn-youtube flex items-center justify-between px-5 py-3 bg-black/60 border border-gray-800 rounded-xl transition-all duration-300 group">
+                    <a href="#" target="_blank" class="listen-link btn-youtube flex items-center justify-between px-5 py-3 bg-black/60 border border-gray-800 rounded-xl duration-300 group">
                         <div class="flex items-center gap-3">
                             <i class="fa-brands fa-youtube text-2xl text-[#ff0000]"></i>
                             <span class="font-semibold text-sm group-hover:text-white text-gray-300">YouTube Music</span>
                         </div>
                         <i class="fa-solid fa-arrow-up-right-from-square text-xs text-gray-500 group-hover:text-white"></i>
                     </a>
-
                 </div>
             </div>
         </div>
@@ -256,6 +467,29 @@ A fresh, feel-good house pop track crafted for warm days and long nights. Good e
 <script>
     gsap.registerPlugin(ScrollTrigger);
 
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // --- INTRO CON CASSETTA 3D ---
+    const canvasContainer = document.getElementById('canvas-container');
+    const sceneShadow = document.getElementById('scene-shadow');
+
+    gsap.set(canvasContainer, { opacity: 1 });
+    gsap.set('#section-1 > div', { opacity: 0, y: 26, scale: .985, force3D: true });
+
+    // --- PARTICELLE LEGGERE ---
+    const particles = document.getElementById('particles');
+    const particleCount = window.innerWidth < 768 ? 18 : 34;
+    for (let i = 0; i < particleCount; i++) {
+        const p = document.createElement('span');
+        p.className = 'particle';
+        p.style.left = `${Math.random() * 100}%`;
+        p.style.top = `${Math.random() * 100}%`;
+        p.style.animationDuration = `${10 + Math.random() * 18}s`;
+        p.style.animationDelay = `${-Math.random() * 20}s`;
+        p.style.opacity = `${0.08 + Math.random() * 0.18}`;
+        particles.appendChild(p);
+    }
+
     // --- INTERAZIONE UI ---
     const listenBtn = document.getElementById('listen-trigger');
     const linksMenu = document.getElementById('links-menu');
@@ -267,11 +501,23 @@ A fresh, feel-good house pop track crafted for warm days and long nights. Good e
         listenBtn.innerHTML = isOpen
             ? '<i class="fa-solid fa-xmark text-xs"></i> Chiudi'
             : '<i class="fa-solid fa-play text-xs"></i> Ascolta ora';
+
+        if (navigator.vibrate && window.innerWidth < 768) navigator.vibrate(12);
     });
 
     document.addEventListener('click', () => {
         linksMenu.classList.remove('open');
         listenBtn.innerHTML = '<i class="fa-solid fa-play text-xs"></i> Ascolta ora';
+    });
+
+    document.querySelectorAll('.glass-card').forEach(card => {
+        card.addEventListener('pointermove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width) * 100;
+            const y = ((e.clientY - rect.top) / rect.height) * 100;
+            card.style.setProperty('--mx', `${x}%`);
+            card.style.setProperty('--my', `${y}%`);
+        }, { passive: true });
     });
 
     // --- SETUP SCENA 3D ---
@@ -289,7 +535,7 @@ A fresh, feel-good house pop track crafted for warm days and long nights. Good e
     renderer.toneMappingExposure = 1.08;
     container.appendChild(renderer.domElement);
 
-    // --- ILLUMINAZIONE PREMIUM ---
+    // --- ILLUMINAZIONE DINAMICA ---
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.42);
     scene.add(ambientLight);
 
@@ -311,7 +557,6 @@ A fresh, feel-good house pop track crafted for warm days and long nights. Good e
 
     let spoolLeftMesh, spoolRightMesh;
 
-    // Fallback solo se il GLB non viene trovato.
     function createHighFidelityProceduralCassette() {
         const group = new THREE.Group();
 
@@ -357,7 +602,7 @@ A fresh, feel-good house pop track crafted for warm days and long nights. Good e
         const labelTexture = new THREE.CanvasTexture(canvas);
         labelTexture.encoding = THREE.sRGBEncoding;
         const labelGeo = new THREE.BoxGeometry(1.95, 0.98, 0.3);
-        const labelMat = new THREE.MeshStandardMaterial({ map: labelTexture, roughness: 0.28, metalness: 0.18 });
+        const labelMat = new THREE.MeshStandardMaterial({ map: labelTexture, roughness: 0.26, metalness: 0.2 });
         const label = new THREE.Mesh(labelGeo, labelMat);
         label.position.set(0, 0.1, 0.02);
         group.add(label);
@@ -392,8 +637,58 @@ A fresh, feel-good house pop track crafted for warm days and long nights. Good e
         targetProgress: 0,
         mouseX: 0,
         mouseY: 0,
-        scrollVelocity: 0
+        scrollVelocity: 0,
+        active: true
     };
+
+    let introHasFinished = false;
+
+    const introOffset = {
+        x: 0,
+        y: window.innerWidth < 768 ? -1.05 : 2.35,
+        z: -1.15,
+        rx: 0.58,
+        ry: -0.92,
+        rz: 0.34,
+        scale: -0.16
+    };
+
+    function playCassetteIntro() {
+        if (reduceMotion) {
+            introOffset.x = 0;
+            introOffset.y = 0;
+            introOffset.z = 0;
+            introOffset.rx = 0;
+            introOffset.ry = 0;
+            introOffset.rz = 0;
+            introOffset.scale = 0;
+            gsap.set('#section-1 > div', { opacity: 1, y: 0, scale: 1 });
+            introHasFinished = true;
+            return;
+        }
+
+        gsap.timeline({
+            delay: .08,
+            defaults: { ease: 'power3.out' },
+            onComplete: () => { introHasFinished = true; }
+        })
+        .to(introOffset, {
+            x: 0,
+            y: 0,
+            z: 0,
+            rx: 0,
+            ry: 0,
+            rz: 0,
+            scale: 0,
+            duration: 1.35
+        }, 0)
+        .to('#section-1 > div', {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: .78
+        }, .45);
+    }
 
     function polishImportedModel(root) {
         root.traverse((child) => {
@@ -401,8 +696,9 @@ A fresh, feel-good house pop track crafted for warm days and long nights. Good e
             child.frustumCulled = false;
 
             if (child.material) {
-                child.material.roughness = Math.min(child.material.roughness ?? 0.45, 0.38);
-                child.material.metalness = Math.max(child.material.metalness ?? 0.2, 0.28);
+                child.material.roughness = Math.min(child.material.roughness ?? 0.45, 0.34);
+                child.material.metalness = Math.max(child.material.metalness ?? 0.2, 0.32);
+                if ('clearcoat' in child.material) child.material.clearcoat = Math.max(child.material.clearcoat ?? 0, .35);
                 child.material.needsUpdate = true;
             }
 
@@ -426,13 +722,14 @@ A fresh, feel-good house pop track crafted for warm days and long nights. Good e
     }
 
     loader.load(
-        'cassette-tape/source/cassette_tape_02.glb',
+        'public/cassette-tape/source/cassette_tape_02.glb',
         (gltf) => {
             const cassette = gltf.scene;
             polishImportedModel(cassette);
             fitModelToView(cassette);
             modelGroup.add(cassette);
             initScrollAnimations();
+            playCassetteIntro();
         },
         undefined,
         () => {
@@ -440,6 +737,7 @@ A fresh, feel-good house pop track crafted for warm days and long nights. Good e
             const procedural = createHighFidelityProceduralCassette();
             modelGroup.add(procedural);
             initScrollAnimations();
+            playCassetteIntro();
         }
     );
 
@@ -456,22 +754,25 @@ A fresh, feel-good house pop track crafted for warm days and long nights. Good e
 
         return {
             scale: isMobile
-                ? gsap.utils.interpolate(1.08, 1.25, settle) + dolly * 0.08
-                : gsap.utils.interpolate(1.08, 1.20, settle) + dolly * 0.10,
+                ? gsap.utils.interpolate(1.16, 1.22, settle) + dolly * 0.075
+                : gsap.utils.interpolate(1.08, 1.20, settle) + dolly * 0.12,
 
             x: isMobile
                 ? gsap.utils.interpolate(0, 0, cinematic)
                 : gsap.utils.interpolate(side, -side * 0.82, cinematic),
 
             y: isMobile
-                ? gsap.utils.interpolate(1.05, -1.22, cinematic)
+                ? gsap.utils.interpolate(-0.72, 1.02, cinematic)
                 : gsap.utils.interpolate(0.06, -0.92, cinematic),
 
-            z: gsap.utils.interpolate(0, 1.28, dolly),
+            z: gsap.utils.interpolate(0, 1.38, dolly),
 
             rx: gsap.utils.interpolate(0.48, 0.22, cinematic),
             ry: gsap.utils.interpolate(-0.72, Math.PI * 2.08 + 0.54, cinematic),
-            rz: gsap.utils.interpolate(0.12, -0.18, cinematic)
+            rz: gsap.utils.interpolate(0.12, -0.18, cinematic),
+
+            cameraZ: gsap.utils.interpolate(7.4, 7.02, dolly),
+            cameraY: gsap.utils.interpolate(0, -0.16, cinematic)
         };
     }
 
@@ -491,20 +792,8 @@ A fresh, feel-good house pop track crafted for warm days and long nights. Good e
         modelGroup.position.set(initial.x, initial.y, initial.z);
         modelGroup.rotation.set(initial.rx, initial.ry, initial.rz);
 
-        gsap.set('#section-1 > div', {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            force3D: true
-        });
-
-        gsap.set('#section-2 > div', {
-            opacity: isMobile ? 0 : 1,
-            y: isMobile ? 42 : 18,
-            scale: 1,
-            force3D: true
-        });
-
+        gsap.set('#section-1 > div', { opacity: introHasFinished ? 1 : 0, y: introHasFinished ? 0 : 26, scale: introHasFinished ? 1 : .985, force3D: true });
+        gsap.set('#section-2 > div', { opacity: isMobile ? 0 : 1, y: isMobile ? 42 : 18, scale: 1, force3D: true });
         gsap.set('#section-2', { pointerEvents: isMobile ? 'none' : 'auto' });
 
         scrollTween = gsap.timeline({
@@ -512,7 +801,7 @@ A fresh, feel-good house pop track crafted for warm days and long nights. Good e
                 trigger: 'main',
                 start: 'top top',
                 end: travel,
-                scrub: 0.42,
+                scrub: reduceMotion ? 0 : 0.42,
                 invalidateOnRefresh: true,
                 anticipatePin: 1,
                 onUpdate: (self) => {
@@ -525,20 +814,21 @@ A fresh, feel-good house pop track crafted for warm days and long nights. Good e
         scrollTween
             .to('#section-1 > div', {
                 opacity: 0,
-                y: isMobile ? -20 : -10,
+                y: isMobile ? -14 : -10,
                 scale: 0.985,
                 ease: 'power2.out',
                 duration: .34
             }, 0.05)
             .to('#section-2 > div', {
                 opacity: 1,
-                y: isMobile ? 10 : 18,
+                y: isMobile ? 0 : 18,
                 scale: 1,
                 ease: 'power3.out',
                 duration: .42
             }, 0.44)
-            .to('.bg-glow-pink', { xPercent: 38, yPercent: 18, opacity: .72, ease: 'none' }, 0)
-            .to('.bg-glow-blue', { xPercent: -30, yPercent: -15, opacity: .9, ease: 'none' }, 0);
+            .to('.bg-glow-pink', { xPercent: 38, yPercent: 18, opacity: .62, ease: 'none' }, 0)
+            .to('.bg-glow-blue', { xPercent: -30, yPercent: -15, opacity: 1, ease: 'none' }, 0)
+            .to('#scene-shadow', { opacity: .85, scale: 1.05, ease: 'none' }, 0.18);
 
         ScrollTrigger.create({
             trigger: '#section-2',
@@ -589,6 +879,8 @@ A fresh, feel-good house pop track crafted for warm days and long nights. Good e
     }
 
     function snapToDirection(direction) {
+        if (reduceMotion) return false;
+
         const targetBottom = getSecondPageTargetY();
         const y = window.scrollY;
 
@@ -629,30 +921,42 @@ A fresh, feel-good house pop track crafted for warm days and long nights. Good e
         motion.mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
     }, { passive: true });
 
+    document.addEventListener('visibilitychange', () => {
+        motion.active = !document.hidden;
+    });
+
     const clock = new THREE.Clock();
     let lastProgress = 0;
 
     function animate() {
         requestAnimationFrame(animate);
+        if (!motion.active) return;
+
         const t = clock.getElapsedTime();
 
-        motion.progress = gsap.utils.interpolate(motion.progress, motion.targetProgress, 0.075);
+        motion.progress = gsap.utils.interpolate(motion.progress, motion.targetProgress, reduceMotion ? 1 : 0.075);
         const state = getSceneState(motion.progress);
-        const floatY = Math.sin(t * 1.35) * 0.045;
-        const floatZ = Math.cos(t * 1.1) * 0.025;
+        const floatY = reduceMotion ? 0 : Math.sin(t * 1.35) * 0.045;
+        const floatZ = reduceMotion ? 0 : Math.cos(t * 1.1) * 0.025;
         const velocityKick = Math.min(motion.scrollVelocity, 0.9);
 
-        modelGroup.scale.setScalar(state.scale + velocityKick * 0.018);
+        modelGroup.scale.setScalar(state.scale + introOffset.scale + velocityKick * 0.018);
         modelGroup.position.set(
-            state.x + motion.mouseX * 0.12,
-            state.y + floatY - motion.mouseY * 0.09,
-            state.z + floatZ
+            state.x + introOffset.x + motion.mouseX * 0.12,
+            state.y + introOffset.y + floatY - motion.mouseY * 0.09,
+            state.z + introOffset.z + floatZ
         );
         modelGroup.rotation.set(
-            state.rx + motion.mouseY * 0.055,
-            state.ry + motion.mouseX * 0.075,
-            state.rz + Math.sin(t * 0.9) * 0.014 + velocityKick * 0.035
+            state.rx + introOffset.rx + motion.mouseY * 0.055,
+            state.ry + introOffset.ry + motion.mouseX * 0.075,
+            state.rz + introOffset.rz + Math.sin(t * 0.9) * 0.014 + velocityKick * 0.035
         );
+
+        const blueDominance = motion.progress;
+        const pinkDominance = 1 - blueDominance;
+        pinkLight.intensity = 3.2 + pinkDominance * 2.3 + Math.sin(t * .9) * .12;
+        cyanLight.intensity = 3.1 + blueDominance * 2.7 + Math.cos(t * .85) * .12;
+        ambientLight.intensity = 0.38 + Math.sin(motion.progress * Math.PI) * 0.08;
 
         pinkLight.position.set(
             -3.7 + Math.sin(t * 0.42) * 2.4 + motion.mouseX * 0.8,
@@ -676,7 +980,8 @@ A fresh, feel-good house pop track crafted for warm days and long nights. Good e
         motion.scrollVelocity *= 0.92;
 
         camera.position.x = gsap.utils.interpolate(camera.position.x, motion.mouseX * 0.12, 0.04);
-        camera.position.y = gsap.utils.interpolate(camera.position.y, -motion.mouseY * 0.10, 0.04);
+        camera.position.y = gsap.utils.interpolate(camera.position.y, state.cameraY - motion.mouseY * 0.10, 0.04);
+        camera.position.z = gsap.utils.interpolate(camera.position.z, state.cameraZ, 0.045);
         camera.lookAt(0, 0, 0);
         renderer.render(scene, camera);
     }
