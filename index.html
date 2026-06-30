@@ -10,31 +10,693 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow-y: auto;
-            background-color: #030306;
-            color: #ffffff;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            scroll-behavior: smooth;
+<style>
+    :root {
+        --pink: #ff007f;
+        --cyan: #00f0ff;
+        --bg: #030306;
+    }
+
+    html, body {
+        margin: 0;
+        padding: 0;
+        min-height: 100%;
+        overflow-y: auto;
+        background:
+            radial-gradient(circle at 15% 20%, rgba(255, 0, 127, 0.10), transparent 32%),
+            radial-gradient(circle at 85% 78%, rgba(0, 240, 255, 0.08), transparent 35%),
+            #030306;
+        color: #ffffff;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        scroll-behavior: auto;
+        overscroll-behavior-y: none;
+    }
+
+    body::-webkit-scrollbar { display: none; }
+    body { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .font-syne { font-family: 'Syne', sans-serif; }
+
+    #canvas-container {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100dvh;
+        z-index: 1;
+        pointer-events: none;
+        opacity: 0;
+        animation: canvasReveal 1.2s ease forwards .2s;
+    }
+
+    @keyframes canvasReveal { to { opacity: 1; } }
+
+    main {
+        min-height: 200vh;
+        isolation: isolate;
+    }
+
+    .scroll-section {
+        min-height: 100vh;
+        width: 100%;
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+    }
+
+    .glass-card {
+        position: relative;
+        transform-style: preserve-3d;
+        will-change: transform, opacity;
+        overflow: hidden;
+        backface-visibility: hidden;
+        -webkit-font-smoothing: antialiased;
+        transform: translateZ(0);
+    }
+
+    .glass-card::before {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(135deg, rgba(255,255,255,.22), rgba(255,255,255,.02), rgba(0,240,255,.16));
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+    .title-gege {
+        font-size: clamp(3.2rem, 14vw, 7.2rem);
+        line-height: .88;
+        white-space: nowrap;
+        overflow-wrap: normal;
+        word-break: keep-all;
+        letter-spacing: -0.075em;
+        transform: translateX(-0.03em);
+        max-width: 100%;
+        display: block;
+    }
+
+    .links-panel {
+        max-height: 0;
+        opacity: 0;
+        transform: translateY(-8px) scale(.98);
+        transition: max-height .55s cubic-bezier(.22, 1, .36, 1), opacity .35s ease, transform .45s cubic-bezier(.22, 1, .36, 1), margin .35s ease;
+        overflow: hidden;
+    }
+
+    .links-panel.open {
+        max-height: 300px;
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        margin-top: 1rem;
+    }
+
+    .btn-spotify:hover { box-shadow: 0 0 24px rgba(30, 215, 96, 0.35); border-color: #1ed760; }
+    .btn-apple:hover { box-shadow: 0 0 24px rgba(252, 60, 84, 0.35); border-color: #fc3c54; }
+    .btn-youtube:hover { box-shadow: 0 0 24px rgba(255, 0, 0, 0.35); border-color: #ff0000; }
+
+    .bg-glow-pink, .bg-glow-blue {
+        position: fixed;
+        border-radius: 999px;
+        filter: blur(10px);
+        pointer-events: none;
+        z-index: 0;
+        will-change: transform, opacity;
+        mix-blend-mode: screen;
+    }
+
+    .bg-glow-pink {
+        width: 46vw;
+        height: 46vw;
+        min-width: 320px;
+        min-height: 320px;
+        background: radial-gradient(circle, rgba(255, 0, 127, 0.17) 0%, rgba(255, 0, 127, 0.05) 34%, transparent 68%);
+        top: 8%;
+        left: -16%;
+    }
+
+    .bg-glow-blue {
+        width: 52vw;
+        height: 52vw;
+        min-width: 360px;
+        min-height: 360px;
+        background: radial-gradient(circle, rgba(0, 240, 255, 0.13) 0%, rgba(0, 240, 255, 0.04) 36%, transparent 70%);
+        bottom: -10%;
+        right: -14%;
+    }
+
+    .grain {
+        position: fixed;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+        opacity: .12;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+        mix-blend-mode: soft-light;
+    }
+
+    @media (min-width: 768px) {
+        #section-2 {
+            align-items: flex-end;
+            padding-bottom: clamp(6rem, 11vh, 8rem);
         }
-        
-        body::-webkit-scrollbar {
-            display: none;
+    }
+
+    @media (max-width: 767px) {
+        main { min-height: 200vh; }
+        .scroll-section { min-height: 100dvh; align-items: flex-start; padding-top: 7rem; }
+        #section-2 { align-items: flex-end; padding-bottom: 2.2rem; }
+        .scroll-section > div { max-width: 100%; }
+        .title-gege { font-size: clamp(3rem, 21vw, 5.3rem); letter-spacing: -0.085em; }
+    }
+    
+</style>
+
+</head>
+<body>
+
+<div class="bg-glow-pink"></div>
+<div class="bg-glow-blue"></div>
+<div class="grain"></div>
+
+<div id="canvas-container"></div>
+
+<main class="relative z-10">
+
+    <section id="section-1" class="scroll-section px-6 md:px-24">
+        <div class="glass-card w-full max-w-[620px] bg-black/40 backdrop-blur-md p-6 md:p-8 rounded-2xl border border-white/5 shadow-2xl">
+            <span class="text-xs uppercase tracking-[0.3em] text-[#00f0ff] font-semibold mb-2 block">Official Artist Profile</span>
+            <h1 class="font-syne title-gege font-extrabold tracking-tight mb-6">
+                GEGÈ
+            </h1>
+            <p class="text-gray-200 text-lg md:text-xl font-light leading-relaxed mb-8">
+Just a music lover exploring sounds. Guided by old-school roots and new frequencies, my goal is simple: putting the focus back on the feeling.            </p>
+            <div class="flex items-center gap-2 text-sm text-gray-400">
+                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                <span>New release available below</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="section-2" class="scroll-section px-6 md:px-24 justify-end">
+        <div class="glass-card max-w-xl w-full text-right md:text-left md:ml-auto bg-black/40 backdrop-blur-md p-6 md:p-8 rounded-2xl border border-white/5 shadow-2xl">
+            <span class="text-xs uppercase tracking-[0.3em] text-[#ff007f] font-semibold mb-2 block">New Single Out Now</span>
+            <h2 class="font-syne text-5xl md:text-7xl font-extrabold tracking-tight leading-none mb-4">
+                Don't feel<br>a thing
+            </h2>
+            <p class="text-gray-200 text-base md:text-lg font-light mb-8">
+A fresh, feel-good house pop track crafted for warm days and long nights. Good energy and a groove meant to be shared. Take a listen and join my journey from the very beginning            </p>
+
+            <div class="inline-block text-left w-full md:w-auto">
+                <button id="listen-trigger" class="w-full md:w-auto px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-all transform hover:scale-105 flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-play text-xs"></i> Listen Now
+                </button>
+
+                <div id="links-menu" class="links-panel flex flex-col gap-3 min-w-[280px]">
+
+                    <a href="#" target="_blank" class="btn-spotify flex items-center justify-between px-5 py-3 bg-black/60 border border-gray-800 rounded-xl transition-all duration-300 group">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-brands fa-spotify text-2xl text-[#1ed760]"></i>
+                            <span class="font-semibold text-sm group-hover:text-white text-gray-300">Spotify</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-xs text-gray-500 group-hover:text-white"></i>
+                    </a>
+
+                    <a href="#" target="_blank" class="btn-apple flex items-center justify-between px-5 py-3 bg-black/60 border border-gray-800 rounded-xl transition-all duration-300 group">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-brands fa-apple text-2xl text-[#fc3c54]"></i>
+                            <span class="font-semibold text-sm group-hover:text-white text-gray-300">Apple Music</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-xs text-gray-500 group-hover:text-white"></i>
+                    </a>
+
+                    <a href="#" target="_blank" class="btn-youtube flex items-center justify-between px-5 py-3 bg-black/60 border border-gray-800 rounded-xl transition-all duration-300 group">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-brands fa-youtube text-2xl text-[#ff0000]"></i>
+                            <span class="font-semibold text-sm group-hover:text-white text-gray-300">YouTube Music</span>
+                        </div>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-xs text-gray-500 group-hover:text-white"></i>
+                    </a>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+<script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // --- INTERAZIONE UI ---
+    const listenBtn = document.getElementById('listen-trigger');
+    const linksMenu = document.getElementById('links-menu');
+
+    listenBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        linksMenu.classList.toggle('open');
+        const isOpen = linksMenu.classList.contains('open');
+        listenBtn.innerHTML = isOpen
+            ? '<i class="fa-solid fa-xmark text-xs"></i> Chiudi'
+            : '<i class="fa-solid fa-play text-xs"></i> Ascolta ora';
+    });
+
+    document.addEventListener('click', () => {
+        linksMenu.classList.remove('open');
+        listenBtn.innerHTML = '<i class="fa-solid fa-play text-xs"></i> Ascolta ora';
+    });
+
+    // --- SETUP SCENA 3D ---
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0, 7.4);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.08;
+    container.appendChild(renderer.domElement);
+
+    // --- ILLUMINAZIONE PREMIUM ---
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.42);
+    scene.add(ambientLight);
+
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.85);
+    keyLight.position.set(4.8, 5.2, 5.4);
+    scene.add(keyLight);
+
+    const rimLight = new THREE.DirectionalLight(0x9fefff, 1.2);
+    rimLight.position.set(-5, 2, -3);
+    scene.add(rimLight);
+
+    const pinkLight = new THREE.PointLight(0xff007f, 4.5, 18);
+    pinkLight.position.set(-4, 3, 4);
+    scene.add(pinkLight);
+
+    const cyanLight = new THREE.PointLight(0x00f0ff, 4.3, 18);
+    cyanLight.position.set(4, -3, 4);
+    scene.add(cyanLight);
+
+    let spoolLeftMesh, spoolRightMesh;
+
+    // Fallback solo se il GLB non viene trovato.
+    function createHighFidelityProceduralCassette() {
+        const group = new THREE.Group();
+
+        const bodyGeo = new THREE.BoxGeometry(2.6, 1.7, 0.28);
+        const bodyMat = new THREE.MeshPhysicalMaterial({
+            color: 0x09070f,
+            roughness: 0.18,
+            metalness: 0.65,
+            clearcoat: 1,
+            clearcoatRoughness: 0.08,
+            sheen: 0.35
+        });
+        const body = new THREE.Mesh(bodyGeo, bodyMat);
+        group.add(body);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = 1024;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+
+        const gradient = ctx.createLinearGradient(0, 0, 1024, 512);
+        gradient.addColorStop(0, '#090716');
+        gradient.addColorStop(0.45, '#ff007f');
+        gradient.addColorStop(1, '#00f0ff');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, 1024, 512);
+
+        ctx.strokeStyle = 'rgba(255,255,255,.24)';
+        ctx.lineWidth = 10;
+        ctx.strokeRect(34, 34, 956, 444);
+        ctx.fillStyle = 'rgba(0,0,0,.22)';
+        ctx.fillRect(80, 290, 864, 72);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 96px "Syne", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('GEGÈ', 512, 190);
+
+        ctx.fillStyle = '#d7fbff';
+        ctx.font = 'bold 34px "Plus Jakarta Sans", sans-serif';
+        ctx.fillText('SIDE A  •  DON\'T FEEL A THING', 512, 340);
+
+        const labelTexture = new THREE.CanvasTexture(canvas);
+        labelTexture.encoding = THREE.sRGBEncoding;
+        const labelGeo = new THREE.BoxGeometry(1.95, 0.98, 0.3);
+        const labelMat = new THREE.MeshStandardMaterial({ map: labelTexture, roughness: 0.28, metalness: 0.18 });
+        const label = new THREE.Mesh(labelGeo, labelMat);
+        label.position.set(0, 0.1, 0.02);
+        group.add(label);
+
+        const windowGeo = new THREE.BoxGeometry(0.72, 0.3, 0.32);
+        const windowMat = new THREE.MeshPhysicalMaterial({ color: 0x020106, roughness: 0.05, metalness: 0.1, transmission: 0.15, clearcoat: 1 });
+        const windowMesh = new THREE.Mesh(windowGeo, windowMat);
+        windowMesh.position.set(0, -0.4, 0.04);
+        group.add(windowMesh);
+
+        const spoolGeo = new THREE.CylinderGeometry(0.18, 0.18, 0.34, 48);
+        const spoolMat = new THREE.MeshStandardMaterial({ color: 0xe9e9e9, roughness: 0.22, metalness: 0.55 });
+
+        spoolLeftMesh = new THREE.Mesh(spoolGeo, spoolMat);
+        spoolLeftMesh.rotation.x = Math.PI / 2;
+        spoolLeftMesh.position.set(-0.55, 0.1, 0.05);
+        group.add(spoolLeftMesh);
+
+        spoolRightMesh = spoolLeftMesh.clone();
+        spoolRightMesh.position.set(0.55, 0.1, 0.05);
+        group.add(spoolRightMesh);
+
+        return group;
+    }
+
+    const loader = new THREE.GLTFLoader();
+    let modelGroup = new THREE.Group();
+    scene.add(modelGroup);
+
+    const motion = {
+        progress: 0,
+        targetProgress: 0,
+        mouseX: 0,
+        mouseY: 0,
+        scrollVelocity: 0
+    };
+
+    function polishImportedModel(root) {
+        root.traverse((child) => {
+            if (!child.isMesh) return;
+            child.frustumCulled = false;
+
+            if (child.material) {
+                child.material.roughness = Math.min(child.material.roughness ?? 0.45, 0.38);
+                child.material.metalness = Math.max(child.material.metalness ?? 0.2, 0.28);
+                child.material.needsUpdate = true;
+            }
+
+            const name = child.name.toLowerCase();
+            if (name.includes('spool') || name.includes('reel') || name.includes('wheel')) {
+                if (!spoolLeftMesh) spoolLeftMesh = child;
+                else if (!spoolRightMesh && child !== spoolLeftMesh) spoolRightMesh = child;
+            }
+        });
+    }
+
+    function fitModelToView(object) {
+        const box = new THREE.Box3().setFromObject(object);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+        object.position.sub(center);
+
+        const maxAxis = Math.max(size.x, size.y, size.z) || 1;
+        const scale = 2.85 / maxAxis;
+        object.scale.setScalar(scale);
+    }
+
+    loader.load(
+        'public/cassette-tape/source/cassette_tape_02.glb',
+        (gltf) => {
+            const cassette = gltf.scene;
+            polishImportedModel(cassette);
+            fitModelToView(cassette);
+            modelGroup.add(cassette);
+            initScrollAnimations();
+        },
+        undefined,
+        () => {
+            console.warn('GLB non trovato: controlla che il file sia in public/cassette-tape/source/cassette_tape_02.glb');
+            const procedural = createHighFidelityProceduralCassette();
+            modelGroup.add(procedural);
+            initScrollAnimations();
         }
-        body {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+    );
+
+    function smoothstep(t) {
+        return t * t * (3 - 2 * t);
+    }
+
+    function getSceneState(progress) {
+        const isMobile = window.innerWidth < 768;
+        const side = Math.min(window.innerWidth / 410, 3.25);
+        const cinematic = gsap.parseEase('power2.inOut')(progress);
+        const dolly = Math.sin(progress * Math.PI);
+        const settle = smoothstep(progress);
+
+        return {
+            scale: isMobile
+                ? gsap.utils.interpolate(1.08, 1.25, settle) + dolly * 0.08
+                : gsap.utils.interpolate(1.08, 1.20, settle) + dolly * 0.10,
+
+            x: isMobile
+                ? gsap.utils.interpolate(0, 0, cinematic)
+                : gsap.utils.interpolate(side, -side * 0.82, cinematic),
+
+            y: isMobile
+                ? gsap.utils.interpolate(1.05, -1.22, cinematic)
+                : gsap.utils.interpolate(0.06, -0.92, cinematic),
+
+            z: gsap.utils.interpolate(0, 1.28, dolly),
+
+            rx: gsap.utils.interpolate(0.48, 0.22, cinematic),
+            ry: gsap.utils.interpolate(-0.72, Math.PI * 2.08 + 0.54, cinematic),
+            rz: gsap.utils.interpolate(0.12, -0.18, cinematic)
+        };
+    }
+
+    let scrollTween;
+    let autoScrollLocked = false;
+    let autoScrollReady = true;
+
+    function initScrollAnimations() {
+        if (scrollTween) scrollTween.kill();
+        ScrollTrigger.getAll().forEach(t => t.kill());
+
+        const isMobile = window.innerWidth < 768;
+        const travel = () => document.documentElement.scrollHeight - window.innerHeight;
+        const initial = getSceneState(0);
+
+        modelGroup.scale.setScalar(initial.scale);
+        modelGroup.position.set(initial.x, initial.y, initial.z);
+        modelGroup.rotation.set(initial.rx, initial.ry, initial.rz);
+
+        gsap.set('#section-1 > div', {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            force3D: true
+        });
+
+        gsap.set('#section-2 > div', {
+            opacity: isMobile ? 0 : 1,
+            y: isMobile ? 42 : 18,
+            scale: 1,
+            force3D: true
+        });
+
+        gsap.set('#section-2', { pointerEvents: isMobile ? 'none' : 'auto' });
+
+        scrollTween = gsap.timeline({
+            scrollTrigger: {
+                trigger: 'main',
+                start: 'top top',
+                end: travel,
+                scrub: 0.42,
+                invalidateOnRefresh: true,
+                anticipatePin: 1,
+                onUpdate: (self) => {
+                    motion.targetProgress = self.progress;
+                    motion.scrollVelocity = Math.abs(self.getVelocity()) / 1800;
+                }
+            }
+        });
+
+        scrollTween
+            .to('#section-1 > div', {
+                opacity: 0,
+                y: isMobile ? -20 : -10,
+                scale: 0.985,
+                ease: 'power2.out',
+                duration: .34
+            }, 0.05)
+            .to('#section-2 > div', {
+                opacity: 1,
+                y: isMobile ? 10 : 18,
+                scale: 1,
+                ease: 'power3.out',
+                duration: .42
+            }, 0.44)
+            .to('.bg-glow-pink', { xPercent: 38, yPercent: 18, opacity: .72, ease: 'none' }, 0)
+            .to('.bg-glow-blue', { xPercent: -30, yPercent: -15, opacity: .9, ease: 'none' }, 0);
+
+        ScrollTrigger.create({
+            trigger: '#section-2',
+            start: 'top center',
+            end: 'bottom center',
+            onEnter: () => gsap.set('#section-2', { pointerEvents: 'auto' }),
+            onLeaveBack: () => isMobile && gsap.set('#section-2', { pointerEvents: 'none' })
+        });
+
+        ScrollTrigger.refresh();
+    }
+
+    function smoothNativeScrollTo(targetY, duration = 820) {
+        if (!autoScrollReady || autoScrollLocked) return;
+
+        autoScrollReady = false;
+        autoScrollLocked = true;
+
+        const startY = window.scrollY;
+        const distance = targetY - startY;
+        const start = performance.now();
+
+        function step(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = progress < .5
+                ? 4 * progress * progress * progress
+                : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+            window.scrollTo(0, startY + distance * eased);
+
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            } else {
+                window.scrollTo(0, targetY);
+                motion.targetProgress = targetY <= 2 ? 0 : 1;
+                ScrollTrigger.update();
+                autoScrollLocked = false;
+                setTimeout(() => { autoScrollReady = true; }, 260);
+            }
         }
 
-        .font-syne {
-            font-family: 'Syne', sans-serif;
+        requestAnimationFrame(step);
+    }
+
+    function getSecondPageTargetY() {
+        return document.documentElement.scrollHeight - window.innerHeight;
+    }
+
+    function snapToDirection(direction) {
+        const targetBottom = getSecondPageTargetY();
+        const y = window.scrollY;
+
+        if (direction > 0 && y < targetBottom - 40) {
+            smoothNativeScrollTo(targetBottom, 820);
+            return true;
         }
 
-        #canvas-container {
+        if (direction < 0 && y > 40) {
+            smoothNativeScrollTo(0, 760);
+            return true;
+        }
+
+        return false;
+    }
+
+    window.addEventListener('wheel', (e) => {
+        if (Math.abs(e.deltaY) < 8) return;
+        if (snapToDirection(e.deltaY)) e.preventDefault();
+    }, { passive: false });
+
+    window.addEventListener('touchstart', (e) => {
+        window.__touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    window.addEventListener('touchmove', (e) => {
+        const startY = window.__touchStartY ?? e.touches[0].clientY;
+        const currentY = e.touches[0].clientY;
+        const direction = startY - currentY;
+
+        if (Math.abs(direction) > 12 && snapToDirection(direction)) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    window.addEventListener('pointermove', (e) => {
+        motion.mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+        motion.mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+    }, { passive: true });
+
+    const clock = new THREE.Clock();
+    let lastProgress = 0;
+
+    function animate() {
+        requestAnimationFrame(animate);
+        const t = clock.getElapsedTime();
+
+        motion.progress = gsap.utils.interpolate(motion.progress, motion.targetProgress, 0.075);
+        const state = getSceneState(motion.progress);
+        const floatY = Math.sin(t * 1.35) * 0.045;
+        const floatZ = Math.cos(t * 1.1) * 0.025;
+        const velocityKick = Math.min(motion.scrollVelocity, 0.9);
+
+        modelGroup.scale.setScalar(state.scale + velocityKick * 0.018);
+        modelGroup.position.set(
+            state.x + motion.mouseX * 0.12,
+            state.y + floatY - motion.mouseY * 0.09,
+            state.z + floatZ
+        );
+        modelGroup.rotation.set(
+            state.rx + motion.mouseY * 0.055,
+            state.ry + motion.mouseX * 0.075,
+            state.rz + Math.sin(t * 0.9) * 0.014 + velocityKick * 0.035
+        );
+
+        pinkLight.position.set(
+            -3.7 + Math.sin(t * 0.42) * 2.4 + motion.mouseX * 0.8,
+            2.8 + Math.cos(t * 0.36) * 0.9,
+            4.2 + Math.cos(t * 0.48) * 0.7
+        );
+        cyanLight.position.set(
+            3.8 + Math.cos(t * 0.38) * 2.3 + motion.mouseX * 0.7,
+            -2.6 + Math.sin(t * 0.4) * 0.9,
+            4.3 + Math.sin(t * 0.42) * 0.7
+        );
+
+        if (spoolLeftMesh && spoolRightMesh) {
+            const deltaScroll = Math.abs(motion.progress - lastProgress);
+            const spoolSpeed = deltaScroll * 34 + 0.012;
+            spoolLeftMesh.rotation.y += spoolSpeed;
+            spoolRightMesh.rotation.y += spoolSpeed * 1.08;
+        }
+
+        lastProgress = motion.progress;
+        motion.scrollVelocity *= 0.92;
+
+        camera.position.x = gsap.utils.interpolate(camera.position.x, motion.mouseX * 0.12, 0.04);
+        camera.position.y = gsap.utils.interpolate(camera.position.y, -motion.mouseY * 0.10, 0.04);
+        camera.lookAt(0, 0, 0);
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            initScrollAnimations();
+            ScrollTrigger.refresh();
+        }, 120);
+    });
+</script>
+
+</body>
+</html>        #canvas-container {
             position: fixed;
             top: 0;
             left: 0;
