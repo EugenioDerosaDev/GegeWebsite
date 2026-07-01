@@ -729,7 +729,7 @@ window.scrollTo(0, 0);
             newReleaseStatus: "Nuova uscita disponibile qui sotto",
             singleEyebrow: "Nuovo singolo fuori ora",
             singleTitle: "Don't feel<br>a thing",
-            singleDescription: "Un brano house pop fresco e che ti fa sentire bene, pensato per le giornate estive. Vibe positiva e groove per essere condiviso. Unisciti al mio viaggio fin dall’inizio.",
+            singleDescription: "Un brano house pop fresco e che ti fa sentire bene, pensato per le giornate estive. Vibe positiva e groove per essere condiviso. Unisciti al mio viaggio fin dall'inizio.",
             listen: "Ascolta ora",
             close: "Chiudi"
         },
@@ -803,7 +803,34 @@ window.scrollTo(0, 0);
         btn.addEventListener('click', () => setLanguage(btn.dataset.langSwitch));
     });
 
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // --- RILEVAMENTO PIATTAFORMA / OS ---
+    // Su Windows, prefers-reduced-motion risulta spesso "reduce" anche quando
+    // l'utente NON lo ha scelto consapevolmente (Battery Saver / Modalità
+    // Efficienza di Edge e Chrome lo attivano da soli, ed è comune trovarlo
+    // di default in molte installazioni). Su macOS invece, quando è attivo,
+    // è quasi sempre una scelta esplicita dell'utente in Preferenze di Sistema.
+    // Per questo distinguiamo i due casi: rispettiamo sempre la preferenza,
+    // ma su Windows non disattiviamo del tutto intro e scroll animato,
+    // li rendiamo solo più leggeri/veloci per restare fluidi.
+    function detectPlatform() {
+        if (navigator.userAgentData && navigator.userAgentData.platform) {
+            return navigator.userAgentData.platform;
+        }
+        return navigator.platform || navigator.userAgent || '';
+    }
+
+    const isWindows = /win/i.test(detectPlatform());
+    const systemPrefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // reduceMotion = disattiva DEL TUTTO intro + snap animato (comportamento originale)
+    // Su Windows lo ignoriamo per queste animazioni essenziali, perché quasi
+    // sempre è un falso positivo dell'OS/browser, non una vera richiesta di accessibilità.
+    const reduceMotion = systemPrefersReducedMotion && !isWindows;
+
+    // lightMode = riduce solo gli effetti decorativi/continui (parallax, float,
+    // numero particelle, pixel ratio) per mantenere fluidità su GPU più deboli,
+    // molto comuni su laptop Windows con grafica integrata.
+    const lightMode = isWindows || (systemPrefersReducedMotion && isWindows);
 
     // --- INTRO CON CASSETTA 3D ---
     const canvasContainer = document.getElementById('canvas-container');
@@ -814,7 +841,7 @@ window.scrollTo(0, 0);
 
     // --- PARTICELLE LEGGERE ---
     const particles = document.getElementById('particles');
-    const particleCount = window.innerWidth < 768 ? 18 : 34;
+    const particleCount = (window.innerWidth < 768 || lightMode) ? 18 : 34;
     for (let i = 0; i < particleCount; i++) {
         const p = document.createElement('span');
         p.className = 'particle';
@@ -861,9 +888,9 @@ window.scrollTo(0, 0);
     const camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 100);
     camera.position.set(0, 0, 7.4);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+    const renderer = new THREE.WebGLRenderer({ antialias: !lightMode, alpha: true, powerPreference: 'high-performance' });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, lightMode ? 1.5 : 2));
     renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.08;
@@ -1014,14 +1041,14 @@ window.scrollTo(0, 0);
             ry: 0,
             rz: 0,
             scale: 0,
-            duration: 1.35
+            duration: lightMode ? 0.95 : 1.35
         }, 0)
         .to('#section-1 > div', {
             opacity: 1,
             y: 0,
             scale: 1,
-            duration: .78
-        }, .45);
+            duration: lightMode ? 0.55 : .78
+        }, lightMode ? 0.3 : .45);
     }
 
     function polishImportedModel(root) {
@@ -1120,7 +1147,7 @@ activeIndex: 0,        locked: false,
         touchStartY: 0,
         touchStartX: 0,
         touchConsumed: false,
-        duration: reduceMotion ? 0 : 920
+        duration: reduceMotion ? 0 : (lightMode ? 620 : 920)
     };
     // All'apertura della pagina si parte sempre dalla sezione 1
 window.addEventListener("load", () => {
